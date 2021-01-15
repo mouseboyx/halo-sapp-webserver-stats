@@ -7,4 +7,4 @@ This is far from being completed
 
 These are the files, but installation currently requires setting up mysql tables by hand and putting the files in correct directories on the web and halo server
 
-I'm using /yourDocumentRootHere/halo/  for the php files, and the lua script goes in My Documents/My Games/Halo/sapp/lua/
+Using /yourDocumentRootHere/halo/  for the php files, and the lua script goes in My Documents/My Games/Halo/sapp/lua/
