@@ -48,7 +48,8 @@ if (isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip']
         }
         //create table killed_by (id bigint auto_increment,killer bigint,victim bigint,times bigint,primary key(id));
         //create table killed_by (id bigint auto_increment,server_id bigint,killer bigint,victim bigint,times bigint,primary key(id));
-
+        
+        //need to update this part so that it will work with multiple servers and game cycles, along with new tables created in install.php
         $q="select id from players where name='".$killer."' and ip='".$killer_ip."'";
         $res=mysqli_query($c,$q);
         $row=mysqli_fetch_assoc($res);

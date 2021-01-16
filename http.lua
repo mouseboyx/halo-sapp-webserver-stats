@@ -1,5 +1,14 @@
 
 api_version = "1.9.0.0"
+--[[
+-----Configuration-----
+]]--
+
+--Place server key here
+server_key="development_key_123"
+--The full path of the webserver running statiscs api with trailing slash
+--Example: https://www.an-example-domain-name.com/halo_stats/
+domain_name="http://192.168.86.24/halo/"
 
 ffi = require("ffi")
 ffi.cdef [[
@@ -79,7 +88,8 @@ function OnPlayerDeath(PlayerIndex, KillerIndex)
             local killer_ip = encodeString(get_var(killer, "$ip"):match("(%d+.%d+.%d+.%d+)"))
             local victim_name=encodeString(get_var(victim,"$name"))
             local victim_ip = encodeString(get_var(victim, "$ip"):match("(%d+.%d+.%d+.%d+)"))
-            table.insert(response, http_client.http_get("http://192.168.86.24/halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip,true))
+            local server_key_request='&key='..encodeString(server_key)
+            table.insert(response, http_client.http_get(domain_name.."halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip..server_key_request,true))
         end
     end
 end
@@ -87,7 +97,9 @@ end
 function OnNewGame()
   		--need to add a http request here to let the webserver know a new game has started for this particular server
         game_started = true
-  	timer(1000,"getTestPage")
+        local server_key_request='&key='..encodeString(server_key)
+        table.insert(response, http_client.http_get(domain_name.."game.php?newgame=1"..server_key_request,true))
+        timer(1000,"getTestPage")
 		
 end   
 
@@ -139,21 +151,6 @@ function getTestPage()
 	end
     
 
-end
-
-function OnPlayerDeath(PlayerIndex, KillerIndex)
-		local killer = tonumber(KillerIndex)
-		local victim = tonumber(PlayerIndex)
-		--say_all(killer..","..victim)
-	if (game_started==true) then
-		if (killer~=-1 and killer~=0 and killer~=victim) then
-            local killer_name=encodeString(get_var(killer,"$name"))
-            local killer_ip = encodeString(get_var(killer, "$ip"):match("(%d+.%d+.%d+.%d+)"))
-            local victim_name=encodeString(get_var(victim,"$name"))
-            local victim_ip = encodeString(get_var(victim, "$ip"):match("(%d+.%d+.%d+.%d+)"))
-            table.insert(response, http_client.http_get("http://192.168.86.24/halo/halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip,true))
-        end
-    end
 end
 
 
