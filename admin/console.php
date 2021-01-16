@@ -2,7 +2,7 @@
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
     include '../connect.php';
     ?>
-        <h1 class="admin">Administration console for user: <?php echo $_SESSION['name']; ?></h1>
+        <h1 class="admin">Administration Home for User: <?php echo $_SESSION['name']; ?></h1>
         <div class="admin">
         <h2 class="admin">Servers</h2>
             <section class="admin">
