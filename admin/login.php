@@ -17,29 +17,56 @@ if ($https==true) {
     if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "" ) {
     session_start();
     include '../connect.php';
+    include '../tablePrefix.php';
     if ($c) {
         $username=mysqli_real_escape_string($c,$_POST['username']);
         $password=$_POST['password'];
-        $q="select password from users where admin=1 and username='".$username."'";
+        $q="select password from ".$t_prefix."users where admin=1 and name='".$username."'";
         $res=mysqli_query($c,$q);
         $row = mysqli_fetch_assoc($res);
-        print_r($row);
+        if ($row!=null) {
+            $verify=password_verify($password,$row['password']);
+            if ($verify==true) {
+                $q="select name,id,admin from ".$t_prefix."users where admin=1 and name='".$username."'";
+                $res=mysqli_query($c,$q);
+                if ($res) {
+                    $row = mysqli_fetch_assoc($res);
+                    if ($row!=null) {
+                        $_SESSION['loggedin']=true;
+                        $_SESSION['id']=$row['id'];
+                        $_SESSION['admin']=$row['admin'];
+                        $_SESSION['name']=$row['name'];
+                        ?>
+                        <?php echo $row['name']; ?> logged in, <a href="index.php">redirecting</a>...
+                        <script>
+                        window.location.href='index.php';
+                        </script>
+                        <?php
+                    }
+                }
+            } else {
+                echo 'Username or password incorrect <a href="index.php">Return</a>';
+            }
+        } else {
+            echo 'Username or password incorrect <a href="index.php">Return</a>';
+        }       
     }
     
     }
 } else {
     session_start();
     include '../connect.php';
+    include '../tablePrefix.php';
     if ($c) {
         $username=mysqli_real_escape_string($c,$_POST['username']);
         $password=$_POST['password'];
-        $q="select password from users where admin=1 and name='".$username."'";
+        $q="select password from ".$t_prefix."users where admin=1 and name='".$username."'";
         $res=mysqli_query($c,$q);
         $row = mysqli_fetch_assoc($res);
         if ($row!=null) {
             $verify=password_verify($password,$row['password']);
             if ($verify==true) {
-                $q="select name,id,admin from users where admin=1 and name='".$username."'";
+                $q="select name,id,admin from ".$t_prefix."users where admin=1 and name='".$username."'";
                 $res=mysqli_query($c,$q);
                 if ($res) {
                     $row = mysqli_fetch_assoc($res);

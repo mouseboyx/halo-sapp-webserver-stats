@@ -6,12 +6,19 @@
 <div class="container">
 <?php
     //create table users (id bigint auto_increment,name varchar(255),salt varchar(255),password varchar(255), admin int, primary key(id))
+    if (file_exists('../tablePrefix.php')) {
     include '../connect.php';
-    $q='select * from users where admin=1';
+    include '../tablePrefix.php';
+    $q='select * from '.$t_prefix.'users where admin=1';
     $res=mysqli_query($c,$q);
     //print_r($res);
-    $row = mysqli_fetch_assoc($res);
-    if ($row==null) {
+    $row=mysqli_fetch_assoc($res);
+    mysqli_close($c);
+    } else {
+    $row=null;
+    }
+    if ($row==null && !file_exists('../tablePrefix.php')) {
+        include '../connect.php';
         if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['confirm'])) {
             if (strlen($_POST['username'])<5) {
                 echo 'Username too short';
@@ -19,12 +26,33 @@
                 if (strlen($_POST['password'])<6) {
                     echo 'Password too short';
                 } else {
+                    if (isset($_POST['prefix']) && $_POST['prefix']!='') {
+                        $alpha='abcdefghijklmnopqrstuvwxyz1234567890';
+                        $outPrefix='';
+                        for($i=0;$i<strlen($_POST['prefix']);$i++) {
+                            $isAlpha=false;
+                            for ($j=0;$j<strlen($alpha);$j++) {
+                                if ($_POST['prefix'][$i]==$alpha[$j]) {
+                                    $isAlpha=true;
+                                    break;
+                                }
+                            }
+                            if ($isAlpha==true) {
+                                $outPrefix.=$_POST['prefix'][$i];
+                            }
+                        }
+                        $outPrefix.='_';
+                    } else {
+                        $outPrefix='';
+                    }
+                    $outPrefix=mysqli_real_escape_string($c,$outPrefix);
+                    file_put_contents('../tablePrefix.php','<?php $t_prefix="'.$outPrefix.'"; ?>');
                     $create_table_queries=[
-                    'create table users (id bigint auto_increment,name varchar(255),password varchar(255), admin int, primary key(id))',
-                    'create table servers (id bigint auto_increment,name varchar(70), request_key varchar(255), ip varchar(25),primary key(id))',
-                    'create table server_settings (server_id bigint,description varchar(300),check_ip int,paused int)',
-                    'create table players (id bigint auto_increment,name varchar(25),ip varchar(25),primary key(id))',
-                    'create table killed_by (id bigint auto_increment,server_id bigint,killer bigint,victim bigint,times bigint,primary key(id))'];
+                    'create table '.$outPrefix.'users (id bigint auto_increment,name varchar(255),password varchar(255), admin int, primary key(id))',
+                    'create table '.$outPrefix.'servers (id bigint auto_increment,name varchar(70), request_key varchar(255), ip varchar(25),primary key(id))',
+                    'create table '.$outPrefix.'server_settings (server_id bigint,description varchar(300),check_ip int,paused int)',
+                    'create table '.$outPrefix.'players (id bigint auto_increment,name varchar(25),ip varchar(25),primary key(id))',
+                    'create table '.$outPrefix.'killed_by (id bigint auto_increment,server_id bigint,killer bigint,victim bigint,times bigint,primary key(id))'];
                     
                     foreach ($create_table_queries as $q) {
                         if (mysqli_query($c,$q)) {
@@ -48,7 +76,7 @@
                         //$salt=str_shuffle(rand(1,1000000).time().rand(1,1000000).getUserIpAddr().rand(1,1000000).$_SERVER['HTTP_USER_AGENT'].rand(1,1000000).'halo rocks')
                         $pass_hash=password_hash($password,PASSWORD_DEFAULT);
                         
-                        $q="insert into users (name,password,admin) values ('".$username."','".$pass_hash."',1)";
+                        $q="insert into ".$outPrefix."users (name,password,admin) values ('".$username."','".$pass_hash."',1)";
                         
                         $res=mysqli_query($c,$q);
                         if ($res) {

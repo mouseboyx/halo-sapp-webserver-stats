@@ -27,6 +27,7 @@ include '../isSecure.php';
             if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
                 if (isset($_POST['id'])) {
                     include '../connect.php';
+                    include '../tablePrefix.php';
                     $server_id=mysqli_real_escape_string($c,strip_tags($_POST['id']));
                     //echo $_POST['servername'];
                     //echo $_POST['serverip'];
@@ -50,9 +51,9 @@ include '../isSecure.php';
                                             }
                                             $description=mysqli_real_escape_string($c,strip_tags($_POST['description']));
                                             if (isset($_POST['serverkey'])) {
-                                                $q="select * from servers where (request_key='".$serverkey."' or name='".$servername."' or ip='".$serverip."') and id<>".$server_id;
+                                                $q="select * from ".$t_prefix."servers where (request_key='".$serverkey."' or name='".$servername."' or ip='".$serverip."') and id<>".$server_id;
                                             } else {
-                                                $q="select * from servers where (name='".$servername."' or ip='".$serverip."') and id<>".$server_id;
+                                                $q="select * from ".$t_prefix."servers where (name='".$servername."' or ip='".$serverip."') and id<>".$server_id;
                                             }
                                             $res=mysqli_query($c,$q);
                                             $row = mysqli_fetch_assoc($res);
@@ -60,16 +61,16 @@ include '../isSecure.php';
                                                 echo 'A server with this key, name, or ip address already exists. <form method="post" action="editserver.php"><input type="hidden" name="id" value="'.$server_id.'"><input style="font-size:1.5em;" type="submit" value="Return"></form>';
                                             } else {
                                                 if (isset($_POST['requireip'])) {
-                                                    $q="update server_settings set check_ip=1,description='".$description."' where server_id=".$server_id;
+                                                    $q="update ".$t_prefix."server_settings set check_ip=1,description='".$description."' where server_id=".$server_id;
                                                 } else {
-                                                    $q="update server_settings set check_ip=0,description='".$description."' where server_id=".$server_id;
+                                                    $q="update ".$t_prefix."server_settings set check_ip=0,description='".$description."' where server_id=".$server_id;
                                                 }
                                                 $res=mysqli_query($c,$q);
                                                 if ($res) {
                                                     if (isset($_POST['serverkey'])) {
-                                                        $q="update servers set name='".$servername."',request_key='".$serverkey."',ip='".$serverip."' where id='".$server_id."'";
+                                                        $q="update ".$t_prefix."servers set name='".$servername."',request_key='".$serverkey."',ip='".$serverip."' where id='".$server_id."'";
                                                     } else {
-                                                        $q="update servers set name='".$servername."',ip='".$serverip."' where id='".$server_id."'";
+                                                        $q="update ".$t_prefix."servers set name='".$servername."',ip='".$serverip."' where id='".$server_id."'";
                                                     }
                                                     $res=mysqli_query($c,$q);
                                                     if ($res) {
@@ -89,7 +90,7 @@ include '../isSecure.php';
                         }
                     } else {
                         //echo $server_id;
-                        $q="select servers.name, server_settings.description,servers.ip,servers.request_key,server_settings.check_ip,servers.id from servers inner join server_settings on servers.id=server_settings.server_id where servers.id='".$server_id."' and server_settings.server_id='".$server_id."'";
+                        $q="select ".$t_prefix."servers.name, ".$t_prefix."server_settings.description,".$t_prefix."servers.ip,".$t_prefix."servers.request_key,".$t_prefix."server_settings.check_ip,".$t_prefix."servers.id from ".$t_prefix."servers inner join ".$t_prefix."server_settings on ".$t_prefix."servers.id=".$t_prefix."server_settings.server_id where ".$t_prefix."servers.id='".$server_id."' and ".$t_prefix."server_settings.server_id='".$server_id."'";
                         $res=mysqli_query($c,$q);
                         $row=mysqli_fetch_assoc($res);
                         ?>

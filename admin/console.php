@@ -1,6 +1,7 @@
 <?php
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
     include '../connect.php';
+    include '../tablePrefix.php';
     ?>
         <h1 class="admin">Administration Home for User: <?php echo $_SESSION['name']; ?></h1>
         <div class="admin">
@@ -9,7 +10,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['ad
             <a href="serveradd.php" style="text-decoration:none;">+ Add New Server +</a>
             </section>
             <?php
-                $q='select servers.name, server_settings.description,servers.ip,servers.request_key,server_settings.check_ip,servers.id from servers inner join server_settings on servers.id=server_settings.server_id';
+                $q='select '.$t_prefix.'servers.name, '.$t_prefix.'server_settings.description,'.$t_prefix.'servers.ip,'.$t_prefix.'servers.request_key,'.$t_prefix.'server_settings.check_ip,'.$t_prefix.'servers.id from '.$t_prefix.'servers inner join '.$t_prefix.'server_settings on '.$t_prefix.'servers.id='.$t_prefix.'server_settings.server_id';
                 $res=mysqli_query($c,$q);
                 while ($row=mysqli_fetch_assoc($res)) {
                     echo '<section class="admin server" style="margin-top:2em;">';

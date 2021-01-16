@@ -26,7 +26,7 @@ include '../isSecure.php';
             }
             if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
                     if (isset($_POST['servername']) && isset($_POST['serverip']) && isset($_POST['serverkey']) && isset($_POST['description'])) {
-                            
+                            include '../tablePrefix.php';
                             
                             if (preg_match('/(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$)/',$_POST['serverip'])) {
                                 if (strlen($_POST['servername'])>70) {
@@ -43,25 +43,25 @@ include '../isSecure.php';
                                             $serverip=mysqli_real_escape_string($c,$_POST['serverip']);
                                             $serverkey=mysqli_real_escape_string($c,$_POST['serverkey']);
                                             $description=mysqli_real_escape_string($c,strip_tags($_POST['description']));
-                                            $q="select * from servers where request_key='".$serverkey."' or name='".$servername."' or ip='".$serverip."'";
+                                            $q="select * from ".$t_prefix."servers where request_key='".$serverkey."' or name='".$servername."' or ip='".$serverip."'";
                                             $res=mysqli_query($c,$q);
                                             $row = mysqli_fetch_assoc($res);
                                             if ($row!=null) {
                                                 echo 'A server with this key, name, or ip address already exists.';
                                             } else {
-                                                $q="insert into servers (name,request_key,ip) values ('".$servername."','".$serverkey."','".$serverip."')";
+                                                $q="insert into ".$t_prefix."servers (name,request_key,ip) values ('".$servername."','".$serverkey."','".$serverip."')";
                                                 $res=mysqli_query($c,$q);
                                                 if ($res) {
-                                                    $q="select id from servers where request_key='".$serverkey."' and name='".$servername."' and ip='".$serverip."'";
+                                                    $q="select id from ".$t_prefix."servers where request_key='".$serverkey."' and name='".$servername."' and ip='".$serverip."'";
                                                    // echo '" '.$q.' "';
                                                     $res=mysqli_query($c,$q);
                                                     $row = mysqli_fetch_assoc($res);
                                                     if ($row!=null) {
                                                         $new_id=$row['id'];
                                                         if (isset($_POST['requireip'])) {
-                                                            $q="insert into server_settings (server_id,description,check_ip) values (".$new_id.",'".$description."',1)";
+                                                            $q="insert into ".$t_prefix."server_settings (server_id,description,check_ip) values (".$new_id.",'".$description."',1)";
                                                         } else {
-                                                            $q="insert into server_settings (server_id,description,check_ip) values (".$new_id.",'".$description."',0)";
+                                                            $q="insert into ".$t_prefix."server_settings (server_id,description,check_ip) values (".$new_id.",'".$description."',0)";
                                                         }
                                                         $res=mysqli_query($c,$q);
                                                         if ($res) {
