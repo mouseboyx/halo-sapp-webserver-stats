@@ -8,7 +8,9 @@ ini_set('session.cookie_lifetime',"0");
 ini_set('session.cookie_httponly',"1");
 ?>
 <html>
+<head>
 <?php include '../head.php'; ?>
+</head>
 <body>
 <?php
 if ($https==true) {

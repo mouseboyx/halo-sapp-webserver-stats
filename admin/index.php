@@ -1,5 +1,8 @@
 <html>
+<head>
+<title>Halo Stats Admin</title>
 <?php include '../head.php'; ?>
+</head>
 <body>
 <div class="container">
 <?php
@@ -43,20 +46,18 @@
                     session_start();
             }
             if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
-                    include '../connect.php';
-                    ?>
-                    <h1 class="admin">Administration console for user: <?php echo $_SESSION['name']; ?></h1>
-                    <?php
+                    include 'console.php';
             } else {
                 ?>
+                
                 <h1 class="admin">Login</h1>
+                <section class="admin">
                 <form action="login.php" method="post">
-                    Username <input type="text" id="username" name="username" value="">
-                    <br>
-                    Password <input type="password" id="password" name="password" value="">
-                    <br>
+                    <div><div class="form">Username:</div><div class="form"><input type="text" id="username" name="username" value=""></div></div>
+                    <div><div class="form">Password:</div><div class="form"><input type="password" id="password" name="password" value=""></div></div>
                     <input type="submit" value="Login">
                 </form>
+                </section>
                 <?php
             }
         }
