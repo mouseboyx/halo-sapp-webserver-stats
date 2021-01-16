@@ -26,7 +26,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['ad
                             $check_ip='Yes';
                         }
                         echo '<div class="admin server"><span class="admin description">Always Check ip address: </span><span class="admin property">'.$check_ip.'</span></div>';
-                        echo '<div class="admin server"><form method="post" action="editserver.php"><input style="font-size:1.5em;" type="submit" value="Edit"></form></div>';
+                        echo '<div class="admin server"><form method="post" action="editserver.php"><input type="hidden" name="id" value="'.$row['id'].'"><input style="font-size:1.5em;" type="submit" value="Edit"></form></div>';
                     echo '</section>';
                 }
             ?>
