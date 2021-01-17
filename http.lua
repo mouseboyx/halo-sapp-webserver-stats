@@ -56,6 +56,28 @@ previous_shooting_state = {}
 
 lastDamagedBy={};
 tempMap='';
+
+--Code to find damage "!jpt" tag paths thanks to pR0Ps https://github.com/pR0Ps/halo-ce-sapp-scripts/blob/master/gungame.lua
+local DATA = nil
+function GenerateReferenceData()
+    -- Get tags for every damage available in the map
+    local damage_tag_data = get_damage_tag_data()
+    local damage_tag_by_dmg ={}
+    for _, damage in ipairs(damage_tag_data) do
+        local damage_tag_type = damage[1]
+        local damage_tag_path = damage[2]
+        local damage_tag_id = get_tag_id(damage_tag_type, damage_tag_path)
+        cprint(string.format(" - %s: %s : %s", damage_tag_type, damage_tag_path, damage_tag_id))
+        damage_tag_by_dmg[damage_tag_id]=damage_tag_path
+        
+    end
+    DATA = {
+        damage_tag_by_dmg = damage_tag_by_dmg,        
+    }
+end
+--end block given by pR0Ps
+
+
 function OnScriptLoad()
 
 
@@ -69,10 +91,10 @@ end
 
 function OnDamageApplication(PlayerIndex, Causer, MetaID, Damage, HitString, Backtap)
 	say_all(PlayerIndex..","..Causer..","..HitString..","..MetaID)
-	meta_id=tostring(MetaId)
+	meta_id=tostring(MetaID)
     pi=tonumber(PlayerIndex);
-    lastDamagedBy[pi]=meta_id;
-	
+    lastDamagedBy[pi]=MetaID;
+	--say_all(tostring(DATA.damage_tag_by_dmg[MetaID]))
 	if (Causer~=0) then
 	return true, Damage
 	end
@@ -82,10 +104,11 @@ end
 function OnPlayerDeath(PlayerIndex, KillerIndex)
 		local killer = tonumber(KillerIndex)
 		local victim = tonumber(PlayerIndex)
+        --say_all(tostring(DATA.damage_tag_by_dmg[lastDamagedBy[victim]]))
 		--say_all(killer..","..victim)
 	if (game_started==true) then
 		if (killer~=-1 and killer~=0 and killer~=victim) then
-            local killed_by_weapon =encodeString(lastDamagedBy[victim])
+            local killed_by_weapon =encodeString(tostring(DATA.damage_tag_by_dmg[lastDamagedBy[victim]]))
             local killer_name=encodeString(get_var(killer,"$name"))
             local killer_ip = encodeString(get_var(killer, "$ip"):match("(%d+.%d+.%d+.%d+)"))
             local victim_name=encodeString(get_var(victim,"$name"))
@@ -99,9 +122,13 @@ end
 function OnNewGame()
   		--need to add a http request here to let the webserver know a new game has started for this particular server
         game_started = true
+        GenerateReferenceData()
         local server_key_request='&key='..encodeString(server_key)
         local current_map=encodeString(tostring(get_var(1,"$map")));
-        table.insert(response, http_client.http_get(domain_name.."game.php?newgame=1".."&map="..current_map..server_key_request,true))
+        local current_mode=encodeString(tostring(get_var(1,"$mode")));
+        local current_game_type=encodeString(tostring(get_var(1,"$gt")));
+        
+        table.insert(response, http_client.http_get(domain_name.."game.php?newgame=1".."&type="..current_game_type.."&mode="..current_mode.."&map="..current_map..server_key_request,true))
         timer(1000,"getTestPage")
 		
 end   
@@ -276,7 +303,7 @@ function OnTick()
 						--responseSize=table.getn(response)
 						--response[responseSize+1] = http_client.http_get("http://192.168.86.24/sleep.php",true)	
 						--table.insert(response, http_client.http_get("https://mouseboyx.xyz/",true))
-                        say_all(tempMap)
+                        --say_all(tempMap)
 						--Check after 1 second to see if the request has been completed
 						--timer (1000,"getTestPage")
 					end
@@ -314,3 +341,70 @@ function table.splice(tbl, start, length)
    end
    return spliced, remainder
 end
+
+--begin helper functions for GenerateReferenceData() given by pR0Ps
+-- Decode an integer to an ascii string
+function decode_ascii(value)
+    local r, i = {}, 1
+    while value > 0 do
+        r[i] = string.char(value%256)
+        i = i + 1
+        value = math.floor(value/256)
+    end
+    return string.reverse(table.concat(r))
+end
+
+
+-- Reads the tag type and path from an address
+function resolve_reference(address)
+    local type = decode_ascii(read_dword(address))
+    local path_address = read_dword(address + 0x4)
+    if path_address == 0 then
+        return type, nil
+    end
+    return type, read_string(path_address)
+end
+
+
+
+
+
+function get_damage_tag_data()
+    local r = {}
+    local map_base = 0x40440000
+    local tag_base = read_dword(map_base)
+    local tag_count = read_dword(map_base + 0xC)
+
+    for i=0, tag_count - 1 do
+        local tag = tag_base + i * 0x20
+        local tag_type = decode_ascii(read_dword(tag))
+        local tag_path = read_string(read_dword(tag + 0x10))
+        if (tag_type == "jpt!") then
+            r[#r+1] = {tag_type, tag_path}
+        end
+    end
+    return r
+end
+
+
+-- Get the id of a tag given its type and path
+function get_tag_id(tag_type, tag_path)
+    local tag = lookup_tag(tag_type, tag_path)
+    if tag == 0 then return nil end
+    return read_dword(tag + 0xC)
+end
+
+
+-- Convert tag path keys of a table to tag ids
+-- Drops invalid tags
+function tagmap(type, tbl)
+    local r = {}
+    for k, v in pairs(tbl) do
+        local id = get_tag_id(type, k)
+        if id ~= nil then
+            r[id] = v
+        end
+    end
+    return r
+end
+--end block by pR0Ps

@@ -35,6 +35,9 @@ $damage['bloodgulch']=[
 ["tank_chain_gun" => "3836805949"],
 ["tank_shell" => "3833070340"],
 ["warthog_chain_gun" => "3825664659"],
+["needler_single_needle" => "3894871731"],
+["needler_melee" => "3892250251"],
+["needler_multi_explosion" => "3894412972"],
 ]
 
 ?>

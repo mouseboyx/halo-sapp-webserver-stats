@@ -1,5 +1,5 @@
 <?php
-        if (isset($_GET['newgame']) && $_GET['newgame']==1) {
+        if (isset($_GET['newgame']) && $_GET['newgame']==1 && isset($_GET['map']) && isset($_GET['mode']) && isset($_GET['type'])) {
             include 'tablePrefix.php';
             include 'connect.php';
             $request_key=mysqli_real_escape_string($c,$_GET['key']);
@@ -11,13 +11,19 @@
                     $thisIp=getUserIpAddr();
                     if ($thisIP==$row['ip']) {
                         if ($request_key==$row['request_key']) {
-                            $q="insert into ".$t_prefix."games (server_id) values (".$row['id'].")";
+                            $map=mysqli_real_escape_string($c,$_GET['map']);
+                            $mode=mysqli_real_escape_string($c,$_GET['mode']);
+                            $type=mysqli_real_escape_string($c,$_GET['type']);
+                            $q="insert into ".$t_prefix."games (server_id,map,mode,type) values (".$row['id'].",'".$map."','".$mode."','".$type."')";
                             $res=mysqli_query($c,$q);
                         }
                     }
                 } else {
                     if ($request_key==$row['request_key']) {
-                            $q="insert into ".$t_prefix."games (server_id) values (".$row['id'].")";
+                            $map=mysqli_real_escape_string($c,$_GET['map']);
+                            $mode=mysqli_real_escape_string($c,$_GET['mode']);
+                            $type=mysqli_real_escape_string($c,$_GET['type']);
+                            $q="insert into ".$t_prefix."games (server_id,map,mode,type) values (".$row['id'].",'".$map."','".$mode."','".$type."')";
                             $res=mysqli_query($c,$q);
                         }
                 }
