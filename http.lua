@@ -6,9 +6,12 @@ api_version = "1.9.0.0"
 
 --Place server key here
 server_key="development_key_123"
+
 --The full path of the webserver running statiscs api with trailing slash
 --Example: https://www.an-example-domain-name.com/halo_stats/
 domain_name="http://192.168.86.24/halo/"
+
+-----End Configuration-----
 
 ffi = require("ffi")
 ffi.cdef [[
@@ -51,9 +54,10 @@ previous_weapon_slot = {}
 previous_reload_state = {}
 previous_shooting_state = {}
 
-
+lastDamagedBy={};
+tempMap='';
 function OnScriptLoad()
-  
+
 
 register_callback(cb['EVENT_SPAWN'],"OnPlayerSpawn")
 register_callback(cb['EVENT_GAME_START'],"OnNewGame")
@@ -66,14 +70,11 @@ end
 function OnDamageApplication(PlayerIndex, Causer, MetaID, Damage, HitString, Backtap)
 	say_all(PlayerIndex..","..Causer..","..HitString..","..MetaID)
 	meta_id=tostring(MetaId)
-    --Planning to collect all the MetaID from all the maps to be able to send what method or weapon a player was killed by.
-    --Setting the index of an array here to the last thing they were damaged by can be sent along with other information on death
-	if (meta_id=="3862234305") then
-        say_all("frag damage on bloodgulch")
-    end
+    pi=tonumber(PlayerIndex);
+    lastDamagedBy[pi]=meta_id;
 	
 	if (Causer~=0) then
-	return false, Damage*0
+	return true, Damage
 	end
 end
 
@@ -84,12 +85,13 @@ function OnPlayerDeath(PlayerIndex, KillerIndex)
 		--say_all(killer..","..victim)
 	if (game_started==true) then
 		if (killer~=-1 and killer~=0 and killer~=victim) then
+            local killed_by_weapon =encodeString(lastDamagedBy[victim])
             local killer_name=encodeString(get_var(killer,"$name"))
             local killer_ip = encodeString(get_var(killer, "$ip"):match("(%d+.%d+.%d+.%d+)"))
             local victim_name=encodeString(get_var(victim,"$name"))
             local victim_ip = encodeString(get_var(victim, "$ip"):match("(%d+.%d+.%d+.%d+)"))
             local server_key_request='&key='..encodeString(server_key)
-            table.insert(response, http_client.http_get(domain_name.."halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip..server_key_request,true))
+            table.insert(response, http_client.http_get(domain_name.."halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip.."&killed_by_weapon="..killed_by_weapon..server_key_request,true))
         end
     end
 end
@@ -98,7 +100,8 @@ function OnNewGame()
   		--need to add a http request here to let the webserver know a new game has started for this particular server
         game_started = true
         local server_key_request='&key='..encodeString(server_key)
-        table.insert(response, http_client.http_get(domain_name.."game.php?newgame=1"..server_key_request,true))
+        local current_map=encodeString(tostring(get_var(1,"$map")));
+        table.insert(response, http_client.http_get(domain_name.."game.php?newgame=1".."&map="..current_map..server_key_request,true))
         timer(1000,"getTestPage")
 		
 end   
@@ -272,7 +275,8 @@ function OnTick()
 						--say_all(" sent "..tostring(testchar).." , "..tostring(teststring))
 						--responseSize=table.getn(response)
 						--response[responseSize+1] = http_client.http_get("http://192.168.86.24/sleep.php",true)	
-						table.insert(response, http_client.http_get("https://mouseboyx.xyz/",true))
+						--table.insert(response, http_client.http_get("https://mouseboyx.xyz/",true))
+                        say_all(tempMap)
 						--Check after 1 second to see if the request has been completed
 						--timer (1000,"getTestPage")
 					end
