@@ -40,5 +40,5 @@ $stock_halo_damage_tags=[
 'weapons\plasma grenade\attached' => 'Plasma Grenade Stuck',
 'weapons\plasma grenade\explosion' => 'Plasma Grenade',
 ];
-
+asort($stock_halo_damage_tags,SORT_STRING);
 ?>

@@ -1,13 +1,3 @@
-<html>
-<head>
-<title>Add New Server</title>
-<?php include '../head.php'; ?>
-</head>
-<body>
-<div class="container">
-<h1 class="admin">Add New Halo Server</h1>
-<div class="admin">
-        <?php include 'adminmenu.php' ?>
 <?php
 include '../isSecure.php';
             ini_set('session.use_strict_mode',"1");
@@ -24,6 +14,19 @@ include '../isSecure.php';
                     session_start();
             }
             if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
+?>
+<html>
+<head>
+<title>Add New Server</title>
+<?php include '../head.php'; ?>
+</head>
+<body>
+<div class="container">
+<h1 class="admin">Add New Halo Server</h1>
+<div class="admin">
+        <?php include 'adminmenu.php' ?>
+<?php
+
                     if (isset($_POST['servername']) && isset($_POST['serverip']) && isset($_POST['serverkey']) && isset($_POST['description'])) {
                             include '../tablePrefix.php';
                             
@@ -98,7 +101,7 @@ include '../isSecure.php';
                     </section>
                     <?php
                     }
-            }
+            
 ?>
         <script>
             serverkey=document.getElementById('serverkey');
@@ -116,3 +119,6 @@ include '../isSecure.php';
 </div>
 </body>
 </html>
+<?php
+}
+?>

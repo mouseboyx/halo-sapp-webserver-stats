@@ -1,12 +1,3 @@
-<html>
-<head>
-<title>Edit Server</title>
-<?php include '../head.php'; ?>
-</head>
-<body>
-<div class="container">
-<h1 class="admin">Edit Halo Server</h1>
-<?php include 'adminmenu.php' ?>
 <?php
 include '../isSecure.php';
             ini_set('session.use_strict_mode',"1");
@@ -23,6 +14,18 @@ include '../isSecure.php';
                     session_start();
             }
             if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
+?>
+<html>
+<head>
+<title>Edit Server</title>
+<?php include '../head.php'; ?>
+</head>
+<body>
+<div class="container">
+<h1 class="admin">Edit Halo Server</h1>
+<?php include 'adminmenu.php' ?>
+<?php
+            
                 if (isset($_POST['id'])) {
                     include '../connect.php';
                     include '../tablePrefix.php';
@@ -122,7 +125,10 @@ include '../isSecure.php';
                         <?php
                     }
                 }
-            }
+            
 ?>
 </body>
 </html>
+<?php
+}
+?>

@@ -50,7 +50,7 @@
                     $create_table_queries=[
                     'create table '.$outPrefix.'users (id bigint auto_increment,name varchar(255),password varchar(255), admin int, primary key(id))',
                     'create table '.$outPrefix.'servers (id bigint auto_increment,name varchar(70), request_key varchar(255), ip varchar(25),primary key(id))',
-                    'create table '.$outPrefix.'server_settings (server_id bigint,description varchar(300),check_ip int,paused int)',
+                    'create table '.$outPrefix.'server_settings (server_id bigint,description varchar(300),check_ip int,paused int,fallback_stock int)',
                     'create table '.$outPrefix.'players (id bigint auto_increment,name varchar(25),ip varchar(25),primary key(id))',                    
                     'create table '.$outPrefix.'killed_by (id bigint auto_increment,server_id bigint,game_id bigint,killer bigint,victim bigint,times bigint,primary key(id))',
                     'create table '.$outPrefix.'killed_by_weapon (killed_by_id bigint,tag_path varchar(100),times bigint)',
