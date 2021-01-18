@@ -60,8 +60,11 @@
                     'create table '.$outPrefix.'total_server_deaths (server_id bigint,victim bigint,times bigint)',
                     'create table '.$outPrefix.'total_server_kills (server_id bigint,killer bigint,times bigint)',
                     'create table '.$outPrefix.'game_server_deaths (server_id bigint,game_id bigint,victim bigint,times bigint)',
-                    'create table '.$outPrefix.'game_server_kills (server_id bigint,game_id bigint,killer bigint,times bigint)'];
+                    'create table '.$outPrefix.'game_server_kills (server_id bigint,game_id bigint,killer bigint,times bigint)',
                     
+                    'create table '.$outPrefix.'stock_damage_tags (id bigint auto_increment,tag_path varchar(100),shown_as varchar(100),primary key(id))',
+                    'create table '.$outPrefix.'user_damage_tags (id bigint auto_increment,tag_path varchar(100),shown_as varchar(100),primary key(id))',
+                    ];
                     foreach ($create_table_queries as $q) {
                         if (mysqli_query($c,$q)) {
                             echo $q.'<br>';
@@ -70,7 +73,19 @@
                             break;
                         }
                     }
-                    
+                    include '../damage.php';
+                    foreach ($stock_halo_damage_tags as $tag => $name) {
+                        $tag_escape=mysqli_real_escape_string($c,$tag);
+                        $name_escape=mysqli_real_escape_string($c,$name);
+                        $q="insert into stock_damage_tags (tag_path,shown_as) values ('".$tag_escape."','".$name_escape."')";
+                        $res=mysqli_query($c,$q);
+                        if ($res) {
+                            echo $q.'<br>';
+                        } else {
+                            echo 'Error on '.$q;
+                            break;
+                        }
+                    }
                     
                     
                     $username=mysqli_real_escape_string($c,$_POST['username']);

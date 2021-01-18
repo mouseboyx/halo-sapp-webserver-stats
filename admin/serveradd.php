@@ -6,9 +6,8 @@
 <body>
 <div class="container">
 <h1 class="admin">Add New Halo Server</h1>
-<section class="admin">
-<a href="index.php">Admin Home</a>
-</section>
+<div class="admin">
+        <?php include 'adminmenu.php' ?>
 <?php
 include '../isSecure.php';
             ini_set('session.use_strict_mode',"1");

@@ -156,3 +156,4 @@ prefixInfo.innerHTML='Your prefix will appear as '+outstring+'_table_name_here'
 }
 </script>
 </body>
+</html>

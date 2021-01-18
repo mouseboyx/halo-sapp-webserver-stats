@@ -5,6 +5,7 @@ if (isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip']
     //make sure only valid ipv4 addresses can be used when sent to this script.
     if (preg_match('/(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$)/',$_GET['killer_ip']) && preg_match('/(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$)/',$_GET['victim_ip'])) {
         echo $_GET['killer'].' '.$_GET['victim'].' '.$_GET['killer_ip'].' '.$_GET['victim_ip'].' '.$_GET['killed_by_weapon'].' '.$_GET['key'].' ';
+        file_put_contents('damagelist.txt' , $_GET['killed_by_weapon']."\n",FILE_APPEND);
     }
 }
 if (isset($_GET['test']) && $_GET['test']=='true') {

@@ -1,0 +1,39 @@
+weapons\assault rifle\bullet
+weapons\assault rifle\melee
+weapons\pistol\bullet
+weapons\pistol\melee
+globals\vehicle_collision
+globals\falling
+globals\distance
+weapons\plasma rifle\bolt
+weapons\plasma rifle\melee
+weapons\shotgun\pellet
+weapons\shotgun\melee
+weapons\sniper rifle\sniper bullet
+weapons\sniper rifle\melee
+weapons\rocket launcher\explosion
+weapons\rocket launcher\melee
+weapons\plasma_cannon\effects\plasma_cannon_explosion
+weapons\plasma_cannon\effects\plasma_cannon_melee
+weapons\flamethrower\impact damage
+weapons\flamethrower\explosion
+weapons\flamethrower\melee
+weapons\plasma pistol\bolt
+weapons\plasma rifle\charged bolt
+weapons\plasma pistol\melee
+weapons\flag\melee
+weapons\ball\melee
+vehicles\scorpion\shell explosion
+vehicles\scorpion\bullet
+vehicles\ghost\ghost bolt
+vehicles\warthog\bullet
+weapons\rocket launcher\explosion
+vehicles\banshee\banshee bolt
+vehicles\banshee\mp_fuel rod explosion
+vehicles\c gun turret\mp bolt
+weapons\needler\detonation damage
+weapons\needler\explosion
+weapons\needler\melee
+weapons\frag grenade\explosion
+weapons\plasma grenade\attached
+weapons\plasma grenade\explosion

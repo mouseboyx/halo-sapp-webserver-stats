@@ -12,6 +12,7 @@ body {
 }
 a {
     color:lime;
+    text-decoration:none;
 }
 a:visited {
     color:lime;
@@ -20,11 +21,24 @@ h1.admin {
     background-color:#222;
     border-radius:0.3em;
     padding:0.3em;
+    max-width:90%;
+    text-align:center;
+    display:block;
+    margin:0 auto;
+    margin-bottom:1em;
+}
+.mainmenu {
+    display:block;
+    margin-bottom:1em;
+    
 }
 h2.admin {
     background-color:#222;
     border-radius:0.3em;
     padding:0.3em;
+    display:block;
+    margin:0 auto;
+    margin-bottom:1em;
 }
 div.admin {
     padding:1em;
@@ -86,4 +100,33 @@ section.admin.server {
 .pad {
     padding:0.1em;
     
+}
+.admin .menu {
+}
+input {
+    background-color:#333;
+    color:#efefef;
+    padding:0.3em;
+}
+
+textarea {
+    background-color:#333;
+    color:#efefef;
+    padding:0.3em;
+}
+    
+
+.admin .menu a {
+    text-decoration:none;
+    background-color:#222;
+    padding:1em;
+    display:inline-block;
+    border-radius:0.3em;
+}
+
+.pink {
+    color:pink;
+}
+.lightblue {
+    color:lightblue;
 }

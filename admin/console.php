@@ -4,7 +4,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['ad
     include '../tablePrefix.php';
     ?>
         <h1 class="admin">Administration Home for User: <?php echo $_SESSION['name']; ?></h1>
-        <div class="admin">
+        <?php include 'adminmenu.php' ?>
         <h2 class="admin">Servers</h2>
             <section class="admin">
             <a href="serveradd.php" style="text-decoration:none;">+ Add New Server +</a>
