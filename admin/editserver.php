@@ -45,12 +45,12 @@ include '../isSecure.php';
                                         if (isset($_POST['serverkey']) && strlen($_POST['serverkey']>255)) {
                                             echo 'Server key can not be more than 300 characters <form method="post" action="editserver.php"><input type="hidden" name="id" value="'.$server_id.'"><input style="font-size:1.5em;" type="submit" value="Return"></form>';
                                         } else {
-                                            $servername=mysqli_real_escape_string($c,strip_tags($_POST['servername']));
+                                            $servername=mysqli_real_escape_string($c,strip_tags(htmlspecialchars($_POST['servername'])));
                                             $serverip=mysqli_real_escape_string($c,$_POST['serverip']);
                                             if (isset($_POST['serverkey'])) {
-                                            $serverkey=mysqli_real_escape_string($c,$_POST['serverkey']);
+                                            $serverkey=mysqli_real_escape_string($c,strip_tags(htmlspecialchars($_POST['serverkey'])));
                                             }
-                                            $description=mysqli_real_escape_string($c,strip_tags($_POST['description']));
+                                            $description=mysqli_real_escape_string($c,strip_tags(htmlspecialchars($_POST['description'])));
                                             if (isset($_POST['serverkey'])) {
                                                 $q="select * from ".$t_prefix."servers where (request_key='".$serverkey."' or name='".$servername."' or ip='".$serverip."') and id<>".$server_id;
                                             } else {
@@ -104,7 +104,7 @@ include '../isSecure.php';
                             
                             <div class="admin element"><div class="form">Require this ip address: </div><div class="form"><input type="checkbox" id="requireip" name="requireip" <?php if ($row['check_ip']==1) {echo 'checked';} ?>></div> <div class="form description"> If you are having trouble making requests you can uncheck this.  Leaving unchecked makes it so anyone with the key can make requests in this servers name.</div></div>
                             
-                            <div class="admin element"><div class="form">Server key: </div><div class="form"><input type="text" id="serverkey" name="serverkey" value="<?php echo $row['request_key']; ?>" size="66" disabled><input type="button" id="edit" value="edit key"></div> <div class="form description"> This key was auto-generated with JavaScript, but you can use your own if you wish. This is the key that needs to be placed in the lua script for logging to work.  Max 255 characters.  </div></div>
+                            <div class="admin element"><div class="form">Server key: </div><div class="form"><input type="text" id="serverkey" name="serverkey" value="<?php echo $row['request_key']; ?>" size="66" disabled><input type="button" id="edit" value="edit key"></div> <div class="form description">This is the key that needs to be placed in the lua script for logging to work.  Max 255 characters.    Do not use (? &amp; &quot; &#039; &lt; &gt;) or the key will be invalid.</div></div>
                             
                             <div class="admin element"><div class="form">Server description: </div><textarea rows="10" style="width:100%" name="description"><?php echo $row['description']; ?></textarea> <div class="form description"> Describe this server. When people view the server page this will show up.  Max 300 characters.</div></div>
                             <div>

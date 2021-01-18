@@ -87,7 +87,7 @@ include '../isSecure.php';
   
 ?>
 <div class="form description">
-These translations automatically apply to all maps, including custom maps, unless <a href="tagedit.php">overriden</a>.
+These translations automatically apply to all maps, including custom maps, unless <a href="tagedit.php">overriden</a>.  They are also a fallback measure if no custom damage tag translations are set.
 <br><br>
 Note: If projectile replacement is being done by a script or by a map mod, this may not be accurate to the weapon.  For example if the sniper is modified to shoot tank shells, this will say that they were killed by a tank shell, even if the sniper is the weapon that shot the projectile.  You can override this behavior based on the server and what map is being played here <a href="tagedit.php">Add/Edit <span class="pink">Custom</span> Damage Tags</a>.
 </div>

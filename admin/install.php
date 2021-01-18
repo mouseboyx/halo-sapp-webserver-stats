@@ -62,8 +62,13 @@
                     'create table '.$outPrefix.'game_server_deaths (server_id bigint,game_id bigint,victim bigint,times bigint)',
                     'create table '.$outPrefix.'game_server_kills (server_id bigint,game_id bigint,killer bigint,times bigint)',
                     
+                    'create table '.$outPrefix.'maps (id bigint auto_increment,name varchar(100),primary key(id))',
                     'create table '.$outPrefix.'stock_damage_tags (id bigint auto_increment,tag_path varchar(100),shown_as varchar(100),primary key(id))',
-                    'create table '.$outPrefix.'user_damage_tags (id bigint auto_increment,tag_path varchar(100),shown_as varchar(100),primary key(id))',
+                    'create table '.$outPrefix.'user_damage_tags (damage_tag_list_id bigint ,tag_path varchar(100),shown_as varchar(100))',
+                    'create table '.$outPrefix.'user_damage_tag_lists (id bigint auto_increment,name varchar(100),active int,all_maps int,all_servers int,primary key(id))',
+                    'create table '.$outPrefix.'user_damage_tag_servers (damage_tag_list_id bigint, server_id bigint)',
+                    'create table '.$outPrefix.'user_damage_tag_maps (damget_tag_list_id bigint, map_id bigint)',
+                    
                     ];
                     foreach ($create_table_queries as $q) {
                         if (mysqli_query($c,$q)) {
@@ -78,6 +83,18 @@
                         $tag_escape=mysqli_real_escape_string($c,$tag);
                         $name_escape=mysqli_real_escape_string($c,$name);
                         $q="insert into stock_damage_tags (tag_path,shown_as) values ('".$tag_escape."','".$name_escape."')";
+                        $res=mysqli_query($c,$q);
+                        if ($res) {
+                            echo $q.'<br>';
+                        } else {
+                            echo 'Error on '.$q;
+                            break;
+                        }
+                    }
+                    include '../maps.php';
+                    foreach ($stock_halo_maps as $map) {
+                        $map_escape=mysqli_real_escape_string($c,$map);
+                        $q="insert into maps (name) values ('".$map_escape."')";
                         $res=mysqli_query($c,$q);
                         if ($res) {
                             echo $q.'<br>';
