@@ -88,7 +88,7 @@ include '../isSecure.php';
                         
                         <div class="admin element"><div class="form">Require this ip address: </div><div class="form"><input type="checkbox" id="requireip" name="requireip" checked></div> <div class="form description"> If you are having trouble making requests you can uncheck this.  Leaving unchecked makes it so anyone with the key can make requests in this servers name.</div></div>
                         
-                        <div class="admin element"><div class="form">Server key: </div><div class="form"><input type="text" id="serverkey" name="serverkey" value="" size="66"></div> <div class="form description"> This key was auto-generated with JavaScript, but you can use your own if you wish. This is the key that needs to be placed in the lua script for logging to work.  Max 255 characters.  </div></div>
+                        <div class="admin element"><div class="form">Server key: </div><div class="form"><input type="text" id="serverkey" name="serverkey" value="" size="66"></div> <div class="form description"> This key was auto-generated with JavaScript at random, so it could possibly contain offensive words.  You can use your own key if you wish. This is the key that needs to be placed in the lua script for logging to work.  Max 255 characters.  </div></div>
                         
                         <div class="admin element"><div class="form">Server description: </div><textarea rows="10" style="width:100%" name="description"></textarea> <div class="form description"> Describe this server. When people view the server page this will show up.  Max 300 characters.</div></div>
                         <div>
@@ -102,10 +102,14 @@ include '../isSecure.php';
 ?>
         <script>
             serverkey=document.getElementById('serverkey');
+            var array = new Uint32Array(64);
+            window.crypto.getRandomValues(array);
             instring='abcdefghijklmnopqrstuvwxyz1234567890'
             result=''
-            for (i=0;i<64;i++) {
-                result+=instring[Math.floor(Math.random()*instring.length)]
+            for (i=0;i<array.length;i++) {
+                
+                result+=instring[Math.floor((array[i]/4294967295)*instring.length)]
+                
             }
             serverkey.value=result;
         </script>
