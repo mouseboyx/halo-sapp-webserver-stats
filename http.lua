@@ -5,11 +5,19 @@ api_version = "1.9.0.0"
 ]]--
 
 --Place server key here
-server_key="development_key_123"
+    server_key="development_key_123"
 
 --The full path of the webserver running statiscs api with trailing slash
 --Example: https://www.an-example-domain-name.com/halo_stats/
-domain_name="http://192.168.86.24/halo/"
+    domain_name="http://192.168.86.24/halo/"
+
+--If a single http request takes this many seconds to complete assume the webserver is down or something went wrong
+    request_fail_after=30
+    --ACTION TO TAKE if a request fails for this amount of time
+    --If set to true stop all logging and try to start it again on a new game
+    --If set to false then ignore the timeout and try the next request in line
+    stop_log=false
+    
 
 -----End Configuration-----
 
@@ -114,7 +122,11 @@ function OnPlayerDeath(PlayerIndex, KillerIndex)
             local victim_name=encodeString(get_var(victim,"$name"))
             local victim_ip = encodeString(get_var(victim, "$ip"):match("(%d+.%d+.%d+.%d+)"))
             local server_key_request='&key='..encodeString(server_key)
-            table.insert(response, http_client.http_get(domain_name.."halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip.."&killed_by_weapon="..killed_by_weapon..server_key_request,true))
+            if (stop_http_requests==false) then
+               local url_text=domain_name.."halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip.."&killed_by_weapon="..killed_by_weapon..server_key_request
+                table.insert(response, http_client.http_get(url_text,true))
+                table.insert(response_url,url_text)
+            end
         end
     end
 end
@@ -122,14 +134,19 @@ end
 function OnNewGame()
   		--need to add a http request here to let the webserver know a new game has started for this particular server
         game_started = true
+        stop_http_requests=false
         GenerateReferenceData()
         local server_key_request='&key='..encodeString(server_key)
         local current_map=encodeString(tostring(get_var(1,"$map")));
         local current_mode=encodeString(tostring(get_var(1,"$mode")));
         local current_game_type=encodeString(tostring(get_var(1,"$gt")));
-        
-        table.insert(response, http_client.http_get(domain_name.."game.php?newgame=1".."&type="..current_game_type.."&mode="..current_mode.."&map="..current_map..server_key_request,true))
+        url_text=domain_name.."game.php?newgame=1".."&type="..current_game_type.."&mode="..current_mode.."&map="..current_map..server_key_request
+        if (stop_http_requests==false) then
+            table.insert(response, http_client.http_get(url_text,true))
+            table.insert(response_url,url_text)
+        end
         timer(1000,"getTestPage")
+        
 		
 end   
 
@@ -138,7 +155,6 @@ function OnGameEnd()
 end
 
 
-response={}
 --on player spawn is just a test it could be put anywhere
 function OnPlayerSpawn(PlayerIndex)
 	previous_zoom_level[PlayerIndex] = 65535
@@ -154,28 +170,77 @@ function OnPlayerSpawn(PlayerIndex)
 	
 end
 
-
-
+stop_http_requests=false
+response={}
+response_url={}
+http_fail_count=0;
 function getTestPage()
 	local stopTimer=false
-	if (response[1]~=nil) then	
-		if http_client.http_response_is_null(response[1]) ~= true then
-		local response_text_ptr = http_client.http_read_response(response[1])
-		returning = ffi.string(response_text_ptr)
-			http_client.http_destroy_response(response[1])
-			--say_all(tostring(table.getn(response)))
-			spliced, remainder = table.splice(response,1,1)
-			response=spliced;
-			--say_all(tostring(table.getn(response)))
-			say_all(returning)
-			if (game_started==false and table.getn(response)==0) then
-				stopTimer=true
-			end
-		else
-			
-			
-		end
+	if (response[1]~=nil) then
+        --say_all("null:"..tostring(http_client.http_response_is_null(response[1])))
+        --say_all("length:"..tostring(http_client.http_response_length(response[1])))
+        say_all("received:"..tostring(http_client.http_response_received(response[1])))
+        if (http_client.http_response_received(response[1])==false) then
+            local url_text=response_url[1]
+            say_all(tostring(response_url[1]).." waiting "..http_fail_count)
+            --http_client.http_destroy_response(response[1])
+            --spliced, remainder = table.splice(response,1,1)
+            --response=spliced;
+            --spliced, remainder = table.splice(response_url,1,1)
+            --response_url=spliced;
+            http_fail_count=http_fail_count+1;
+            if (stop_log==false) then
+                if (http_fail_count>request_fail_after) then
+                    say_all(tostring("Ignoring timeout for "..response_url[1]))
+                    http_client.http_destroy_response(response[1])
+                    spliced, remainder = table.splice(response,1,1)
+                    response=spliced;
+                    spliced, remainder = table.splice(response_url,1,1)
+                    http_fail_count=0;
+                    
+                end
+            end
+            --table.insert(response, http_client.http_get(url_text,true))
+            --table.insert(response_url,url_text)
+            
+        else 
+            if http_client.http_response_is_null(response[1]) ~= true then
+            say_all("null:"..tostring(http_client.http_response_is_null(response[1])))
+            say_all("length:"..tostring(http_client.http_response_length(response[1])))
+            say_all("received:"..tostring(http_client.http_response_received(response[1])))
+            local response_text_ptr = http_client.http_read_response(response[1])
+            returning = ffi.string(response_text_ptr)
+                http_client.http_destroy_response(response[1])
+                --say_all(tostring(table.getn(response)))
+                spliced, remainder = table.splice(response,1,1)
+                response=spliced;
+                spliced, remainder = table.splice(response_url,1,1)
+                response_url=spliced;
+                http_fail_count=0;
+                --say_all(tostring(table.getn(response)))
+                say_all(returning)
+                if (game_started==false and table.getn(response)==0) then
+                    stopTimer=true
+                end
+            else
+                
+                
+            end
+        end
 	end
+    if (stop_log==true) then
+        if (http_fail_count>request_fail_after) then
+            say_all("Failed to send http data "..request_fail_after.." times on a single request, stopping log")
+            stop_http_requests=true
+            stopTimer=true
+            for key, value in pairs(response) do
+                http_client.http_destroy_response(response[key])
+                
+            end
+            response_url={};
+        end
+    end
+    
 	if (stopTimer==false) then
 		timer (1000,"getTestPage")
 	end
@@ -287,6 +352,9 @@ function OnTick()
                         I'm using this section to debug things so that if a player presses the flashlight key information can be sent to the halo client
                     ]]--
 					if(key == "flashlight") then
+                        local url_text="http://192.168.86.24/sleep.php"
+                        table.insert(response,http_client.http_get(url_text,true))
+                        table.insert(response_url,url_text);
 						--instring=encodeString(get_var(i,"$name"))
 						--[[
 						outstring=''
