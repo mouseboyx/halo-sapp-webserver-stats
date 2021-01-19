@@ -52,7 +52,61 @@ A new list can be created that will work as a resource that can be changed for t
 </section>
 <section class="admin">
             <span class="admin menu"><a href="taglistadd.php" style="text-decoration:none;">+ Add New Damage Tag List +</a></span>  <span class="admin menu"><a href="taglistadd.php" style="text-decoration:none;">+ Add New Map +</a></span>
-            </section>
+</section>
+<section class="admin">
+<?php
+    include '../connect.php';
+    include '../tablePrefix.php';
+    $q="select * from ".$t_prefix."user_damage_tag_lists";
+    $res=mysqli_query($c,$q);
+    while ($row=mysqli_fetch_assoc($res)) {
+    echo '<section class="admin server" style="margin-top:2em;">';
+        echo '<h2><span class="admin description">Custom Damage Tag List: </span>'.$row['name'].'</h2>';
+        echo '<span class="admin description">Active: </span><br><div class="admin server">';
+            if ($row['active']==1) {
+                echo '<span class="admin property">Yes</span>';
+            } else {
+                echo '<span class="admin property">No</span>';
+            }
+        echo '</div>';
+        
+        echo '<span class="admin description">Affected Maps: </span><br><div class="admin server">';
+        if ($row['all_maps']==1) {
+            echo '<h3>All</h3>';
+        } else {
+            $q2="select ".$t_prefix."maps.name from ".$t_prefix."user_damage_tag_maps inner join ".$t_prefix."maps on ".$t_prefix."user_damage_tag_maps.map_id=".$t_prefix."maps.id and ".$t_prefix."user_damage_tag_maps.damage_tag_list_id=".$row['id'];
+            $res2=mysqli_query($c,$q2);
+                while ($row2=mysqli_fetch_assoc($res2)) {
+                    echo '<span class="admin property">'.$row2['name'].'</span><br>';
+                }
+            
+        }
+        echo '</div>';
+        
+        echo '<span class="admin description">Affected Servers: </span><br><div class="admin server">';
+        if ($row['all_servers']==1) {
+            echo '<h3>All</h3>';
+        } else {
+        
+            $q2="select ".$t_prefix."servers.name,".$t_prefix."servers.ip from ".$t_prefix."user_damage_tag_servers inner join servers on ".$t_prefix."user_damage_tag_servers.server_id=".$t_prefix."servers.id and ".$t_prefix."user_damage_tag_servers.damage_tag_list_id=".$row['id'];
+            $res2=mysqli_query($c,$q2);
+            while ($row2=mysqli_fetch_assoc($res2)) {
+                echo '<span class="admin property">'.$row2['name'].'</span> <span class="admin property">'.$row2['ip'].'</span> <br>';
+            }
+        }
+        echo '</div>';
+        
+        echo '<span class="admin description">Damage Tags: </span><br><div class="admin server"><textarea style="width:100%;" rows="20">';
+            $q2="select * from ".$t_prefix."user_damage_tags where damage_tag_list_id=".$row['id'];
+            $res2=mysqli_query($c,$q2);
+            while ($row2=mysqli_fetch_assoc($res2)) {
+                echo $row2['tag_path'].','.$row2['shown_as']."\n";
+            }
+        echo '</textarea></div>';
+    echo '</section>';
+    }
+?>
+</section>
 </div>
 <script>
 show=false

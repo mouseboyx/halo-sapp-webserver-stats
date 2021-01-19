@@ -67,7 +67,7 @@
                     'create table '.$outPrefix.'user_damage_tags (damage_tag_list_id bigint ,tag_path varchar(100),shown_as varchar(100))',
                     'create table '.$outPrefix.'user_damage_tag_lists (id bigint auto_increment,name varchar(100),active int,all_maps int,all_servers int,primary key(id))',
                     'create table '.$outPrefix.'user_damage_tag_servers (damage_tag_list_id bigint, server_id bigint)',
-                    'create table '.$outPrefix.'user_damage_tag_maps (damget_tag_list_id bigint, map_id bigint)',
+                    'create table '.$outPrefix.'user_damage_tag_maps (damage_tag_list_id bigint, map_id bigint)',
                     
                     ];
                     foreach ($create_table_queries as $q) {

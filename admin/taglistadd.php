@@ -26,9 +26,125 @@ include '../isSecure.php';
 <h1 class="admin">Create Damage Tag List</h1>
 
         <?php include 'adminmenu.php' ?>
-
+<?php
+if (isset($_POST['listname']) && isset($_POST['damagetags'])) {
+    if (isset($_POST['servers']) && isset($_POST['allservers'])) {
+        echo 'Error Cannot choose all servers and a selection of servers';
+    } else {
+        if (isset($_POST['allmaps']) && isset($_POST['maps'])) {
+            echo 'Error Cannot choose all maps and a slection of maps';
+        } else {
+            if (isset($_POST['damagetags']) && $_POST['damagetags']!='') {
+                if (isset($_POST['listname']) && $_POST['listname']!='') {
+                    if (isset($_POST['active']) && $_POST['active']==1) {
+                        $active='1';
+                    } else {
+                        $active='0';
+                    }
+                    if (isset($_POST['allservers']) && $_POST['allservers']==1) {
+                        $allservers='1';
+                    } else {
+                        $allservers='0';
+                    }
+                    if (isset($_POST['allmaps']) && $_POST['allmaps']==1) {
+                        $allmaps='1';
+                    } else {
+                        $allmaps='0';
+                    }
+                    include '../tablePrefix.php';
+                    $list_name=mysqli_real_escape_string($c,strip_tags(htmlspecialchars($_POST['listname'])));
+                    $q="insert into ".$t_prefix."user_damage_tag_lists (name,all_maps,all_servers,active) values ('".$list_name."',".$allmaps.",".$allservers.",".$active.")";
+                    $res=mysqli_query($c,$q);
+                    if ($res) {
+                        $q='select last_insert_id()';
+                        $res=mysqli_query($c,$q);
+                        if ($res) {
+                            $row=mysqli_fetch_assoc($res);
+                            $last_tag_list_id=$row['last_insert_id()'];
+                                if (isset($_POST['servers'])) {
+                                    //user_damage_tag_servers
+                                    foreach ($_POST['servers'] as $server) {
+                                        //echo $last_tag_list_id;
+                                        $server_id=mysqli_real_escape_string($c,$server);
+                                        $q="select id from ".$t_prefix."servers where id=".$server_id;
+                                        //echo "'".$q."'";
+                                        $res=mysqli_query($c,$q);
+                                        $row=mysqli_fetch_assoc($res);
+                                        if ($row!=null) {
+                                            $q="insert into ".$t_prefix."user_damage_tag_servers (damage_tag_list_id,server_id) values (".$last_tag_list_id.",".$server_id.")";
+                                           // echo "'".$q."'";
+                                            $res=mysqli_query($c,$q);
+                                            if ($res) {
+                                                
+                                            } else {
+                                                echo 'Error Mysql error 1';
+                                            }
+                                        } else {
+                                            echo 'Error server id '.$server_id.' does not exist';
+                                        }
+                                    }
+                                }
+                                if (isset($_POST['maps'])) {
+                                    //user_damage_tag_servers
+                                    foreach ($_POST['maps'] as $map) {
+                                        $map_id=mysqli_real_escape_string($c,$map);
+                                        $q="select id from ".$t_prefix."maps where id=".$map_id;
+                                        $res=mysqli_query($c,$q);
+                                        $row=mysqli_fetch_assoc($res);
+                                        if ($row!=null) {
+                                            $q="insert into ".$t_prefix."user_damage_tag_maps (damage_tag_list_id,map_id) values (".$last_tag_list_id.",".$map_id.")";
+                                            $res=mysqli_query($c,$q);
+                                            if ($res) {
+                                                
+                                            } else {
+                                                echo 'Error Mysql error 2';
+                                            }
+                                        } else {
+                                            echo 'Error map id '.$map_id.' does not exist';
+                                        }
+                                    }
+                                }
+                                $lines=explode("\n",$_POST['damagetags']);
+                                foreach ($lines as $line) {
+                                    if ($line!='') {
+                                            $data=explode(',',$line);
+                                            $tag_path=mysqli_real_escape_string($c,$data[0]);
+                                            $shown_as=mysqli_real_escape_string($c,$data[1]);
+                                            $q="insert into ".$t_prefix."user_damage_tags (damage_tag_list_id,tag_path,shown_as) values (".$last_tag_list_id.",'".$tag_path."','".$shown_as."')";
+                                            $res=mysqli_query($c,$q);
+                                            if ($res) {
+                                                
+                                            } else {
+                                                echo 'Error inserting '.$tag_path;
+                                            }
+                                    }
+                                }
+                                echo 'Custom Tag Paths Added <a href="tagedit.php">Return</a>';
+                        } else {
+                            echo $q;
+                            echo 'Error Mysql error';
+                        }
+                    } else {
+                        echo $q;
+                        echo 'Error Mysql error';
+                    }
+                    
+                    
+                } else {
+                    echo 'Error Blank list name';
+                }
+                
+            } else {
+                echo 'Error no damage tags sent';
+            }
+        }
+    }
+    //
+    
+} else {
+?>
 <section class="admin">
-    <form action="serveradd.php" method="post">
+    <form action="taglistadd.php" method="post">
     <div class="admin element"><div class="form">Damage Tag List Name: </div><div class="form"><input type="text" id="listname" name="listname" value=""></div> <div class="form description"> An arbitrary name to identify this list.</div></div>
     
     <div class="admin element"><div class="form">Make this list active: </div><div class="form"><input type="checkbox" id="active" name="active" value="1" checked></div> <div class="form description"> If you want this list to be disabled leave unchecked.</div></div>
@@ -58,7 +174,7 @@ include '../isSecure.php';
         $res=mysqli_query($c,$q);
         if ($res) {
             while ($row=mysqli_fetch_assoc($res)) {
-                echo '<div class="form"><input type="checkbox" class="checkmap" name="map[]" value="'.$row['id'].'"> </div> <div class="form">'.$row['name'].'</div><br>';
+                echo '<div class="form"><input type="checkbox" class="checkmap" name="maps[]" value="'.$row['id'].'"> </div> <div class="form">'.$row['name'].'</div><br>';
             }
         }
         
@@ -71,8 +187,12 @@ include '../isSecure.php';
     weapons\assault rifle\bullet,Assault Rifle<br>
     vehicles\banshee\banshee bolt,Banshee Bolt
     </div></div>
+    <input type="submit"  style="font-size:2em;margin:0 auto;display:block;margin-top:2em;"  value="Add">
     </form>
 </section>
+<?php
+}
+?>
 </div>
 <script>
 inputs=document.getElementsByTagName('input');
