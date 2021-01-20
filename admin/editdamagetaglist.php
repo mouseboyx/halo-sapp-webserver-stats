@@ -236,7 +236,7 @@ $list_id=mysqli_real_escape_string($c,strip_tags(htmlspecialchars(intval($_POST[
         }
         
     ?>
-    <div class="form description">If you don't see a map in the list add it <a href="addmap.php">here</a></div>
+    <div class="form description">If you don't see a map in the list add it <a href="maplist.php">here</a></div>
     </div>
     
     <div class="admin element"><div class="form">Damage Tag List: </div><textarea name="damagetags" rows="40" style="width:100%" placeholder="For example this could be:&#10weapons\assault rifle\bullet,Assault Rifle&#10;vehicles\banshee\banshee bolt,Banshee Bolt"><?php

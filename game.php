@@ -1,5 +1,5 @@
 <?php
-        if (isset($_GET['newgame']) && $_GET['newgame']==1 && isset($_GET['map']) && isset($_GET['mode']) && isset($_GET['type'])) {
+        if (isset($_GET['newgame']) && $_GET['newgame']==1 && isset($_GET['map']) && isset($_GET['mode']) && isset($_GET['type']) && isset($_GET['key'])) {
             include 'tablePrefix.php';
             include 'connect.php';
             $request_key=mysqli_real_escape_string($c,$_GET['key']);
@@ -14,6 +14,20 @@
                             $map=mysqli_real_escape_string($c,$_GET['map']);
                             $mode=mysqli_real_escape_string($c,$_GET['mode']);
                             $type=mysqli_real_escape_string($c,$_GET['type']);
+                            $q="select * from ".$t_prefix."maps where name='".$map."'";
+                            $res=mysqli_query($c,$q);
+                            if ($res) {
+                                $row_map=mysqli_fetch_assoc($res);
+                                if ($row_map!=null) {
+                                    //echo 1;
+                                } else {
+                                    //echo 0;
+                                $q="insert into ".$t_prefix."maps (name) values ('".$map."')";
+                                $res=mysqli_query($c,$q);
+                                }
+                            } else {
+                                //echo 0;
+                            }
                             $q="insert into ".$t_prefix."games (server_id,map,mode,type) values (".$row['id'].",'".$map."','".$mode."','".$type."')";
                             $res=mysqli_query($c,$q);
                         }
@@ -23,9 +37,23 @@
                             $map=mysqli_real_escape_string($c,$_GET['map']);
                             $mode=mysqli_real_escape_string($c,$_GET['mode']);
                             $type=mysqli_real_escape_string($c,$_GET['type']);
+                            $q="select * from ".$t_prefix."maps where name='".$map."'";
+                            $res=mysqli_query($c,$q);
+                            if ($res) {
+                                $row_map=mysqli_fetch_assoc($res);
+                                if ($row_map!=null) {
+                                    //echo 1;
+                                } else {
+                                    //echo 0;
+                                $q="insert into ".$t_prefix."maps (name) values ('".$map."')";
+                                $res=mysqli_query($c,$q);
+                                }
+                            } else {
+                                //echo 0;
+                            }
                             $q="insert into ".$t_prefix."games (server_id,map,mode,type) values (".$row['id'].",'".$map."','".$mode."','".$type."')";
                             $res=mysqli_query($c,$q);
-                        }
+                    }
                 }
             }
         }
