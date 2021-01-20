@@ -103,6 +103,7 @@ A new list can be created that will work as a resource that can be changed for t
                 echo $row2['tag_path'].','.$row2['shown_as']."\n";
             }
         echo '</textarea></div>';
+        echo '<form action="editdamagetaglist.php" method="post"><input type="submit" value="Edit" style="font-size:1.5em;"><input type="hidden" name="id" value="'.$row['id'].'"></form>';
     echo '</section>';
     }
 ?>

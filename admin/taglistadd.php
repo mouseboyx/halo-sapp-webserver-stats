@@ -15,6 +15,7 @@ include '../isSecure.php';
             }
             if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['admin']==1) {
             include '../connect.php';
+            include '../tablePrefix.php';
 ?>
 <html>
 <head>
@@ -153,7 +154,7 @@ if (isset($_POST['listname']) && isset($_POST['damagetags'])) {
     
     <div class="form">Check servers this should apply to:</div><br>
     <?php
-        $q='select * from servers';
+        $q="select * from ".$t_prefix."servers";
         $res=mysqli_query($c,$q);
         if ($res) {
             while ($row=mysqli_fetch_assoc($res)) {
@@ -170,7 +171,7 @@ if (isset($_POST['listname']) && isset($_POST['damagetags'])) {
     
     <div class="form">Check maps this should apply to:</div><br>
     <?php
-        $q='select * from maps';
+        $q="select * from ".$t_prefix."maps";
         $res=mysqli_query($c,$q);
         if ($res) {
             while ($row=mysqli_fetch_assoc($res)) {
