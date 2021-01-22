@@ -9,6 +9,7 @@
     if (file_exists('../tablePrefix.php')) {
     include '../connect.php';
     include '../tablePrefix.php';
+    
     $q='select * from '.$t_prefix.'users where admin=1';
     $res=mysqli_query($c,$q);
     //print_r($res);
@@ -19,6 +20,8 @@
     }
     if ($row==null && !file_exists('../tablePrefix.php')) {
         include '../connect.php';
+        include 'installPassword.php';
+        if (isset($_POST['installpassword']) && $_POST['installpassword']==$install_password) {
         if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['confirm'])) {
             if (strlen($_POST['username'])<5) {
                 echo 'Username too short';
@@ -134,6 +137,9 @@
                     }
                 }
             }
+        }
+        } else {
+            echo 'Incorrect install password';
         }
     } else {
         echo 'The service is currently installed.';

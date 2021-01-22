@@ -1,3 +1,3 @@
 <?php
-    $install_password="";
+    $install_password="asdf";
 ?>

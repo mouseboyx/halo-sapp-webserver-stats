@@ -11,7 +11,11 @@
         //$q='select * from users where admin=1';
         //$res=mysqli_query($c,$q);
         //print_r($res);
+        include 'installPassword.php';
         $table_prefix_set=file_exists('../tablePrefix.php');
+        if ($install_password=="") {
+            echo 'Please set an install password in admin/installPassword.php';
+        } else {
         if ($table_prefix_set==false) {
             ?>
                 <h1 class="admin">Install and Configuration</h1>
@@ -35,7 +39,10 @@
                 <div class="gray pad">This is not required. If you are on shared hosting with a single database, adding a table prefix will prevent different applications from creating and using the same table. <br>Only a-z,0-9 allowed. If left blank, no table prefix will be added.</div>
                 <div id="prefix-info"></div>
                 <br>
-                
+                Install password <input type="password" name="installpassword"> 
+                <div class="gray pad">
+                    This is the password that is set in admin/installPassword.php
+                </div>
                 <input type="submit" value="Install" id="install" disabled>
                 </form>
             <?php
@@ -70,6 +77,7 @@
                 <?php
             }
         }
+    }
     } else {
         ?>
         <h1 class="admin">Install and Configuration</h1>
