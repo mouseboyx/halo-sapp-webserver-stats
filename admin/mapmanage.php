@@ -39,7 +39,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true && $_SESSION['ad
         include '../maps.php';
         foreach ($stock_halo_maps as $map) {
             $map_escape=mysqli_real_escape_string($c,$map);
-            $q="insert into maps (name) values ('".$map_escape."')";
+            $q="insert into ".$t_prefix."maps (name) values ('".$map_escape."')";
             $res=mysqli_query($c,$q);
             if ($res) {
                 echo $q.'<br>';

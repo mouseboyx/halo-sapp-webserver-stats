@@ -81,7 +81,7 @@
                     foreach ($stock_halo_damage_tags as $tag => $name) {
                         $tag_escape=mysqli_real_escape_string($c,$tag);
                         $name_escape=mysqli_real_escape_string($c,$name);
-                        $q="insert into stock_damage_tags (tag_path,shown_as) values ('".$tag_escape."','".$name_escape."')";
+                        $q="insert into ".$outPrefix."stock_damage_tags (tag_path,shown_as) values ('".$tag_escape."','".$name_escape."')";
                         $res=mysqli_query($c,$q);
                         if ($res) {
                             echo $q.'<br>';
@@ -93,7 +93,7 @@
                     include '../maps.php';
                     foreach ($stock_halo_maps as $map) {
                         $map_escape=mysqli_real_escape_string($c,$map);
-                        $q="insert into maps (name) values ('".$map_escape."')";
+                        $q="insert into ".$outPrefix."maps (name) values ('".$map_escape."')";
                         $res=mysqli_query($c,$q);
                         if ($res) {
                             echo $q.'<br>';

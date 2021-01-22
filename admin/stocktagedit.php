@@ -34,21 +34,22 @@ include '../isSecure.php';
 <?php
             
                    include '../connect.php';
+                   include '../tablePrefix.php';
                    if (isset($_GET['default']) && $_GET['default']==1) {
-                        $q='delete from stock_damage_tags';
+                        $q="delete from ".$t_prefix."stock_damage_tags";
                         $res=mysqli_query($c,$q);
                         include '../damage.php';
                         foreach ($stock_halo_damage_tags as $tag => $name) {
                             $tag_escape=mysqli_real_escape_string($c,$tag);
                             $name_escape=mysqli_real_escape_string($c,$name);
-                            $q="insert into stock_damage_tags (tag_path,shown_as) values ('".$tag_escape."','".$name_escape."')";
+                            $q="insert into ".$t_prefix."stock_damage_tags (tag_path,shown_as) values ('".$tag_escape."','".$name_escape."')";
                             $res=mysqli_query($c,$q);
                             
                         }
                         
                    }
                    if (isset($_POST['tags']) && $_POST['tags']!='') {
-                        $q='delete from stock_damage_tags';
+                        $q="delete from ".$t_prefix."stock_damage_tags";
                         $res=mysqli_query($c,$q);
                         $lines=explode("\n",$_POST['tags']);
                         foreach ($lines as $line) {
@@ -62,7 +63,7 @@ include '../isSecure.php';
                             }
                         }
                    }
-                   $q='select tag_path,shown_as from stock_damage_tags';
+                   $q="select tag_path,shown_as from ".$t_prefix."stock_damage_tags";
                    $res=mysqli_query($c,$q);
                    if ($res) {
                         while ($row=mysqli_fetch_assoc($res)) {

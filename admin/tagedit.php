@@ -88,7 +88,7 @@ A new list can be created that will work as a resource that can be changed for t
             echo '<h3>All</h3>';
         } else {
         
-            $q2="select ".$t_prefix."servers.name,".$t_prefix."servers.ip from ".$t_prefix."user_damage_tag_servers inner join servers on ".$t_prefix."user_damage_tag_servers.server_id=".$t_prefix."servers.id and ".$t_prefix."user_damage_tag_servers.damage_tag_list_id=".$row['id'];
+            $q2="select ".$t_prefix."servers.name,".$t_prefix."servers.ip from ".$t_prefix."user_damage_tag_servers inner join ".$t_prefix."servers on ".$t_prefix."user_damage_tag_servers.server_id=".$t_prefix."servers.id and ".$t_prefix."user_damage_tag_servers.damage_tag_list_id=".$row['id'];
             $res2=mysqli_query($c,$q2);
             while ($row2=mysqli_fetch_assoc($res2)) {
                 echo '<span class="admin property">'.$row2['name'].'</span> <span class="admin property">'.$row2['ip'].'</span> <br>';
