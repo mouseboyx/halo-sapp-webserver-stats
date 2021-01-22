@@ -63,6 +63,7 @@ previous_reload_state = {}
 previous_shooting_state = {}
 
 lastDamagedBy={};
+lastHitString={};
 tempMap='';
 
 --Code to find damage "!jpt" tag paths thanks to pR0Ps https://github.com/pR0Ps/halo-ce-sapp-scripts/blob/master/gungame.lua
@@ -95,6 +96,22 @@ register_callback(cb['EVENT_GAME_END'],"OnGameEnd")
 register_callback(cb["EVENT_TICK"],"OnTick")
 register_callback(cb['EVENT_DIE'], 'OnPlayerDeath')
 register_callback(cb['EVENT_DAMAGE_APPLICATION'], "OnDamageApplication")
+register_callback(cb['EVENT_SCORE'],"OnPlayerScore")
+end
+
+function OnPlayerScore(PlayerIndex)
+   --say_all(tostring(a))
+   --say_all(tostring(get_var(a,"$score")))
+   if (game_started==true) then
+        local playerName=encodeString(get_var(PlayerIndex,"$name"));
+        local playerScore=encodeString(get_var(PlayerIndex,"$score"));
+        local playerIp = encodeString(get_var(PlayerIndex, "$ip"):match("(%d+.%d+.%d+.%d+)"))
+        local server_key_request='&key='..encodeString(server_key)
+        local url_text=domain_name.."halo.php?scoring=1&name="..playerName.."&ip="..playerIp.."&score="..playerScore..server_key_request
+        --say_all(url_text);
+                table.insert(response, http_client.http_get(url_text,true))
+                table.insert(response_url,url_text)
+   end
 end
 
 function OnDamageApplication(PlayerIndex, Causer, MetaID, Damage, HitString, Backtap)
@@ -102,11 +119,14 @@ function OnDamageApplication(PlayerIndex, Causer, MetaID, Damage, HitString, Bac
 	meta_id=tostring(MetaID)
     pi=tonumber(PlayerIndex);
     lastDamagedBy[pi]=MetaID;
+    lastHitString[pi]=HitString;
 	--say_all(tostring(DATA.damage_tag_by_dmg[MetaID]))
 	if (Causer~=0) then
 	return true, Damage
 	end
 end
+
+
 
 
 function OnPlayerDeath(PlayerIndex, KillerIndex)
@@ -122,8 +142,9 @@ function OnPlayerDeath(PlayerIndex, KillerIndex)
             local victim_name=encodeString(get_var(victim,"$name"))
             local victim_ip = encodeString(get_var(victim, "$ip"):match("(%d+.%d+.%d+.%d+)"))
             local server_key_request='&key='..encodeString(server_key)
+            local body_part=encodeString(lastHitString[victim]);
             if (stop_http_requests==false) then
-               local url_text=domain_name.."halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip.."&killed_by_weapon="..killed_by_weapon..server_key_request
+               local url_text=domain_name.."halo.php?killer="..killer_name.."&killer_ip="..killer_ip.."&victim="..victim_name.."&victim_ip="..victim_ip.."&killed_by_weapon="..killed_by_weapon.."&body_part="..body_part..server_key_request
                 table.insert(response, http_client.http_get(url_text,true))
                 table.insert(response_url,url_text)
             end
@@ -179,7 +200,7 @@ function getTestPage()
 	if (response[1]~=nil) then
         --say_all("null:"..tostring(http_client.http_response_is_null(response[1])))
         --say_all("length:"..tostring(http_client.http_response_length(response[1])))
-        say_all("received:"..tostring(http_client.http_response_received(response[1])))
+        --say_all("received:"..tostring(http_client.http_response_received(response[1])))
         if (http_client.http_response_received(response[1])==false) then
             local url_text=response_url[1]
             say_all(tostring(response_url[1]).." waiting "..http_fail_count)
@@ -205,9 +226,9 @@ function getTestPage()
             
         else 
             if http_client.http_response_is_null(response[1]) ~= true then
-            say_all("null:"..tostring(http_client.http_response_is_null(response[1])))
-            say_all("length:"..tostring(http_client.http_response_length(response[1])))
-            say_all("received:"..tostring(http_client.http_response_received(response[1])))
+            --say_all("null:"..tostring(http_client.http_response_is_null(response[1])))
+            --say_all("length:"..tostring(http_client.http_response_length(response[1])))
+            --say_all("received:"..tostring(http_client.http_response_received(response[1])))
             local response_text_ptr = http_client.http_read_response(response[1])
             returning = ffi.string(response_text_ptr)
                 http_client.http_destroy_response(response[1])
@@ -242,7 +263,7 @@ function getTestPage()
     end
     
 	if (stopTimer==false) then
-		timer (1000,"getTestPage")
+		timer (250,"getTestPage")
 	end
     
 
@@ -352,7 +373,7 @@ function OnTick()
                         I'm using this section to debug things so that if a player presses the flashlight key information can be sent to the halo client
                     ]]--
 					if(key == "flashlight") then
-                        local url_text="http://192.168.86.24/sleep.php"
+                        local url_text="http://192.168.86.24/halo/score.php"
                         table.insert(response,http_client.http_get(url_text,true))
                         table.insert(response_url,url_text);
 						--instring=encodeString(get_var(i,"$name"))
