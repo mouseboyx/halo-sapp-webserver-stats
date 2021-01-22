@@ -55,6 +55,7 @@
                     'create table '.$outPrefix.'killed_by (id bigint auto_increment,server_id bigint,game_id bigint,killer bigint,victim bigint,times bigint,primary key(id))',
                     'create table '.$outPrefix.'killed_by_weapon (id bigint auto_increment,killed_by_id bigint,tag_path varchar(100),times bigint,primary key(id))',
                     'create table '.$outPrefix.'killed_by_body_part (killed_by_weapon_id bigint,hitstring varchar(100),times bigint)',
+                    'create table '.$outPrefix.'killed_by_backtap (killed_by_weapon_id bigint,times bigint)',
                     
                     'create table '.$outPrefix.'games (id bigint auto_increment,server_id bigint,map varchar(100),mode varchar(100),type varchar(100),started_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,primary key(id))',
                     'create table '.$outPrefix.'game_server_deaths (server_id bigint,game_id bigint,victim bigint,times bigint)',
