@@ -32,14 +32,14 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                         
                         $name=mysqli_real_escape_string($c,utf8_encode($_GET['name']));
                         $ip=mysqli_real_escape_string($c,$_GET['ip']);
-                        $q="select id from ".$t_prefix."players where name='".$name."' and ip='".$ip."' and server_id=".$server_id;
+                        $q="select id from ".$t_prefix."players where name='".$name."' and ip='".$ip."'";
                         $res=mysqli_query($c,$q);
                         $row = mysqli_fetch_assoc($res);
                         
                         if ($row==null) {
                             
                             //$q="insert into ".$t_prefix."players (server_id,name,ip) values (".$server_id.",'".$name."','".$ip."')";
-                            $q="insert into players (server_id,name,ip) select ".$server_id.",'".$name."','".$ip."' from dual where not exists (select * from players where name='".$name."' and ip='".$ip."' and server_id=".$server_id." limit 1)";
+                            $q="insert into ".$t_prefix."players (name,ip) select '".$name."','".$ip."' from dual where not exists (select * from ".$t_prefix."players where name='".$name."' and ip='".$ip."' limit 1)";
                             $res=mysqli_query($c,$q);
                             if ($res) {
                                 $q="select last_insert_id()";
@@ -79,14 +79,14 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                         $killer_ip=mysqli_real_escape_string($c,$_GET['killer_ip']);
                         $victim_ip=mysqli_real_escape_string($c,$_GET['victim_ip']);
                         
-                        if ($res=mysqli_query($c, "select * from ".$t_prefix."players where name='".$killer."' and ip='".$killer_ip."' and server_id=".$server_id)) {
+                        if ($res=mysqli_query($c, "select * from ".$t_prefix."players where name='".$killer."' and ip='".$killer_ip."'")) {
                             
                                 
                             $row = mysqli_fetch_assoc($res);
                             if ($row==null) {
                                 //echo '"'.gettype($row).'"';
                                 //$q="insert into ".$t_prefix."players (server_id,name,ip) values (".$server_id.",'".$killer."','".$killer_ip."')";
-                                $q="insert into players (server_id,name,ip) select ".$server_id.",'".$killer."','".$killer_ip."' from dual where not exists (select * from players where name='".$killer."' and ip='".$killer_ip."' and server_id=".$server_id." limit 1)";
+                                $q="insert into ".$t_prefix."players (name,ip) select '".$killer."','".$killer_ip."' from dual where not exists (select * from ".$t_prefix."players where name='".$killer."' and ip='".$killer_ip."' limit 1)";
                                 $res=mysqli_query($c,$q);
                                 if ($res) {
                                     //echo 'inserted';
@@ -96,11 +96,11 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                                 //echo '"'.gettype($row).'"';
                             }
                         }
-                        if ($res=mysqli_query($c, "select * from ".$t_prefix."players where name='".$victim."' and ip='".$victim_ip."' and server_id=".$server_id)) {
+                        if ($res=mysqli_query($c, "select * from ".$t_prefix."players where name='".$victim."' and ip='".$victim_ip."'")) {
                             $row = mysqli_fetch_assoc($res);
                             if ($row==null) {
                                 //$q="insert into ".$t_prefix."players (server_id,name,ip) values (".$server_id.",'".$victim."','".$victim_ip."')";
-                                $q="insert into players (server_id,name,ip) select ".$server_id.",'".$victim."','".$victim_ip."' from dual where not exists (select * from players where name='".$victim."' and ip='".$victim_ip."' and server_id=".$server_id." limit 1)";
+                                $q="insert into ".$t_prefix."players (name,ip) select '".$victim."','".$victim_ip."' from dual where not exists (select * from ".$t_prefix."players where name='".$victim."' and ip='".$victim_ip."' limit 1)";
                                 $res=mysqli_query($c,$q);
                                 if ($res) {
                                 }
@@ -114,12 +114,12 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                         $row=mysqli_fetch_assoc($res);
                         $game_id=$row['max(id)'];
                         
-                        $q="select id from ".$t_prefix."players where name='".$killer."' and ip='".$killer_ip."' and server_id=".$server_id;
+                        $q="select id from ".$t_prefix."players where name='".$killer."' and ip='".$killer_ip."'";
                         $res=mysqli_query($c, $q);
                         $row=mysqli_fetch_assoc($res);
                         $killer_id=$row['id'];
                         
-                        $q="select id from ".$t_prefix."players where name='".$victim."' and ip='".$victim_ip."' and server_id=".$server_id;
+                        $q="select id from ".$t_prefix."players where name='".$victim."' and ip='".$victim_ip."'";
                         $res=mysqli_query($c, $q);
                         $row=mysqli_fetch_assoc($res);
                         $victim_id=$row['id'];

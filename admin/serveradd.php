@@ -45,11 +45,11 @@ include '../isSecure.php';
                                             $serverip=mysqli_real_escape_string($c,$_POST['serverip']);
                                             $serverkey=mysqli_real_escape_string($c,strip_tags(htmlspecialchars($_POST['serverkey'])));
                                             $description=mysqli_real_escape_string($c,strip_tags(htmlspecialchars($_POST['description'])));
-                                            $q="select * from ".$t_prefix."servers where request_key='".$serverkey."' or name='".$servername."' or ip='".$serverip."'";
+                                            $q="select * from ".$t_prefix."servers where request_key='".$serverkey."' or name='".$servername."'";
                                             $res=mysqli_query($c,$q);
                                             $row = mysqli_fetch_assoc($res);
                                             if ($row!=null) {
-                                                echo 'A server with this key, name, or ip address already exists.';
+                                                echo 'A server with this key or name already exists.';
                                             } else {
                                                 $q="insert into ".$t_prefix."servers (name,request_key,ip) values ('".$servername."','".$serverkey."','".$serverip."')";
                                                 $res=mysqli_query($c,$q);

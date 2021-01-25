@@ -1,0 +1,180 @@
+@font-face {
+  font-family: halo;
+  src: url(halo.ttf);
+}
+body {
+font-family:sans-serif;
+    
+    background-color:#444;
+    background-color:#00001b;
+    color:#2895ff;
+    color:lightblue;
+}
+header {
+    font-family:halo;
+    font-size:4vw;
+        border:10px solid white;
+     border-image: url(border.png) 18 round;
+     margin-bottom:0.3em;
+}
+header:hover {
+    border-image: url(border-hover.png) 18 round;
+    
+}
+header a {
+    text-decoration:none;
+    color:#2895ff;
+    color:lightblue;
+    
+}
+
+.icon {
+    width:4vw;
+    height:auto;
+    float:right;
+}
+div.servers {
+
+           border:10px solid white;
+            border-image: url(border.png) 18 round;   
+}
+
+div.server {
+    border:10px solid white;
+            border-image: url(border.png) 18 round;   
+    
+}
+div.server:hover {
+    border:10px solid white;
+            border-image: url(border-hover.png) 18 round;   
+    
+}
+
+div.server a {
+    text-decoration:none;
+    color:#2895ff;
+    color:lightblue;
+    font-size:1.3em;
+}
+
+h3.server{
+    padding:0;
+    margin:0;
+    
+}
+h1.servers {
+    margin:0;
+    padding:0.3em;
+    font-size:2.4vw;
+    
+}
+
+div.border {
+
+           border:10px solid white;
+            border-image: url(border.png) 18 round;   
+}
+
+div.player {
+
+    border:10px solid white;
+            border-image: url(border.png) 18 round;   
+    
+}
+div.player:hover {
+    border:10px solid white;
+            border-image: url(border-hover.png) 18 round;   
+    
+}
+
+div.player a {
+    text-decoration:none;
+    color:#2895ff;
+    color:lightblue;
+    font-size:1.3em;
+}
+table.border {
+    
+}
+table.border a {
+    text-decoration:none;
+    color:#2895ff;
+    color:lightblue;
+    
+}
+table.border td {
+            position:relative;
+            
+            border-top:10px solid transparent;
+            margin:0;
+            
+            border-bottom:10px solid transparent;
+            border-image: url(border.png) 18 round;  
+    
+}
+
+div.recent {
+    
+    
+}
+input.search {
+    font-family:monospace;
+    border:1px solid white;
+    background-color:#000;
+    color:#fff;
+    width:40%;
+    font-size:2vw;
+    height:3vw;
+    
+}
+input.searchbutton {
+    font-family:monospace;
+    border:1px solid white;
+    background-color:#000;
+    color:#fff;
+    font-size:2vw;
+    width:initial !important;
+    height:3vw;
+}
+.fright {
+    float:right;
+    width:33%;
+}
+.fleft {
+    float:left;
+    width:33%;
+}
+
+.fright:hover {
+    float:right;
+    width:33%;
+     border:10px solid white;
+            border-image: url(border-hover.png) 18 round;   
+}
+.fleft:hover {
+    float:left;
+    width:33%;
+     border:10px solid white;
+            border-image: url(border-hover.png) 18 round;   
+}
+
+
+.fright h1 {
+    display:inline-block;
+    text-align:center;
+    width:100%;
+    font-size:3vmin;
+    
+}
+.fleft h1 {
+    
+    display:inline-block;
+    text-align:center;
+    width:100%;
+    font-size:3vmin;
+}
+.fcontainer a {
+    color:#2895ff;
+    color:lightblue;
+    text-decoration:none !important;
+}
