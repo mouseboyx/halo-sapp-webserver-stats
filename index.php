@@ -34,38 +34,27 @@
         <?php
             include 'connect.php';
             include 'tablePrefix.php';
-            $q="select ".$t_prefix."players.ip as players_ip,".$t_prefix."players.id as players_id,".$t_prefix."players.name as players_name,".$t_prefix."killed_by.times as times,".$t_prefix."servers.name as server_name,".$t_prefix."killed_by.game_id as killed_by_game_id from ".$t_prefix."killed_by inner join ".$t_prefix."players on ".$t_prefix."players.id=".$t_prefix."killed_by.killer inner join ".$t_prefix."servers on ".$t_prefix."killed_by.server_id=".$t_prefix."servers.id order by ".$t_prefix."killed_by.killer desc limit 1024";
+            //$q="select ".$t_prefix."players.ip as players_ip,".$t_prefix."players.id as players_id,".$t_prefix."players.name as players_name,".$t_prefix."killed_by.times as times,".$t_prefix."servers.name as server_name,".$t_prefix."killed_by.game_id as killed_by_game_id from ".$t_prefix."killed_by inner join ".$t_prefix."players on ".$t_prefix."players.id=".$t_prefix."killed_by.killer inner join ".$t_prefix."servers on ".$t_prefix."killed_by.server_id=".$t_prefix."servers.id order by ".$t_prefix."killed_by.killer desc limit 1024";
+            
+            //$q="select * from game_server_kills inner join players on players.id=game_server_kills.killer order by game_id desc limit 5"
+            //$q="select players.name,players.ip,servers.name,players.id,game_server_kills.times from game_server_kills inner join players on players.id=game_server_kills.killer inner join servers on game_server_kills.server_id=servers.id order by game_id desc limit 5";
+            $q="select ".$t_prefix."players.name,".$t_prefix."players.ip,".$t_prefix."servers.name as server_name,".$t_prefix."players.id,".$t_prefix."game_server_kills.times,".$t_prefix."game_server_kills.game_id from ".$t_prefix."game_server_kills inner join ".$t_prefix."players on ".$t_prefix."players.id=".$t_prefix."game_server_kills.killer inner join ".$t_prefix."servers on ".$t_prefix."game_server_kills.server_id=".$t_prefix."servers.id order by game_id desc limit 5";
+            //echo $q;
             
             $res=mysqli_query($c,$q);
-            $counter=0;
-
+            $recent_array=[];
             while ($row=mysqli_fetch_assoc($res)) {
-                $q="select sum(times) from ".$t_prefix."killed_by where game_id=".$row['killed_by_game_id']." and killer=".$row['players_id'];
-                $res2=mysqli_query($c,$q);
-                $row2=mysqli_fetch_assoc($res2);
-                $times=$row2['sum(times)'];
-                $skip=false;
-                foreach ($rows_done as $pid) {
-                    if ($pid==$row['players_id']) {
-                //		echo $row['players_id'].' '.$pid.'<br>';
-
-                        $skip=true;
-                        break;
-                    } else {
-                        $skip=false;
-                    }
-                }
-                if ($counter>=5) {
-                    break;
-                }
-                if ($skip==false) {
+                array_push($recent_array,$row);
+            }
+            sort($recent_array);
+            //while ($row=mysqli_fetch_assoc($res)) {
+            foreach ($recent_array as $row) {
                         ?>
-                        <div class="player"><a href="viewplayer.php?id=<?php echo $row['players_id']; ?>"><h3 class="server">Name: <?php echo $row['players_name'].' '.obscureIp($row['players_ip']); ?> &mdash; Kills: <?php echo $times; ?>
+                        <div class="player"><a href="viewplayer.php?id=<?php echo $row['id']; ?>"><h3 class="server">Name: <?php echo $row['name'].' '.obscureIp($row['ip']); ?> &mdash; Kills: <?php echo $row['times']; ?>
                         &mdash; Server: <?php echo $row['server_name']; ?></h3></a></div>
                         <?php
-                array_push($rows_done,$row['players_id']);
-                $counter++;
-                }
+                
+                
 	
 
             }
@@ -123,7 +112,7 @@
 //
         ?>
         </div>
-        
+        <?php /* ?>
         <div class="border recent">
         <h2> &mdash; Best K/D/R Across All Servers &mdash;</h2>
         <?php
@@ -160,6 +149,38 @@
         ?>
         </div>
         
+        <?php */ ?>
+        <div class="border recent">
+        <h2> &mdash; Most Headshot Kills Across All Servers &mdash;</h2>
+        <?php
+            include 'connect.php';
+            include 'tablePrefix.php';
+            $q="select sum(times) as times,killer,".$t_prefix."players.name,".$t_prefix."players.id,".$t_prefix."players.ip from ".$t_prefix."killed_by_player inner join ".$t_prefix."hitstrings on ".$t_prefix."killed_by_player.hitstring_id=".$t_prefix."hitstrings.id inner join ".$t_prefix."players on ".$t_prefix."players.id=".$t_prefix."killed_by_player.killer where ".$t_prefix."hitstrings.hitstring='head' group by ".$t_prefix."killed_by_player.killer order by times desc limit 5;";
+            //echo $q;
+            
+            //echo $q;
+            
+            $res=mysqli_query($c,$q);
+            $counter=0;
+
+            while ($row=mysqli_fetch_assoc($res)) {
+                
+                
+                        ?>
+                        <div class="player"><a href="viewplayer.php?id=<?php echo $row['id']; ?>"><h3 class="server">Name: <?php echo $row['name'].' '.obscureIp($row['ip']); ?> &mdash; Headshots: <?php echo $row["times"]; ?></h3></a></div>
+                        <?php
+                
+                
+	
+
+            }
+            
+//
+        ?>
+        </div>
+        <?php
+        //
+        ?>
     </div>
 </div>
 </body>

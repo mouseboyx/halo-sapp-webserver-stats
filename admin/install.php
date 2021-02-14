@@ -55,10 +55,16 @@
                     'create table '.$outPrefix.'servers (id bigint auto_increment,name varchar(70), request_key varchar(255), ip varchar(25),primary key(id))',
                     'create table '.$outPrefix.'server_settings (server_id bigint,description varchar(300),check_ip int,paused int,fallback_stock int)',
                     'create table '.$outPrefix.'players (id bigint auto_increment,name varchar(25),ip varchar(25),primary key(id))',                    
+                   /*
                     'create table '.$outPrefix.'killed_by (id bigint auto_increment,server_id bigint,game_id bigint,killer bigint,victim bigint,times bigint,primary key(id))',
                     'create table '.$outPrefix.'killed_by_weapon (id bigint auto_increment,killed_by_id bigint,tag_path varchar(100),times bigint,primary key(id))',
                     'create table '.$outPrefix.'killed_by_body_part (killed_by_weapon_id bigint,hitstring varchar(100),times bigint)',
                     'create table '.$outPrefix.'killed_by_backtap (killed_by_weapon_id bigint,times bigint)',
+                   */
+                   
+                    'create table '.$outPrefix.'weapons (id bigint auto_increment,tag_path varchar(100),primary key(id))',
+                    'create table '.$outPrefix.'hitstrings (id bigint auto_increment,hitstring varchar(100),primary key(id))',
+                    'create table '.$outPrefix.'killed_by_player (id bigint auto_increment,killer bigint,victim bigint,weapon_id bigint,hitstring_id bigint,backtap int,times bigint,primary key(id))',
                     
                     'create table '.$outPrefix.'games (id bigint auto_increment,server_id bigint,map varchar(100),mode varchar(100),type varchar(100),started_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,primary key(id))',
                     'create table '.$outPrefix.'game_server_deaths (server_id bigint,game_id bigint,victim bigint,times bigint)',

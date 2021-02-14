@@ -123,9 +123,10 @@ function OnPlayerDeath(PlayerIndex, KillerIndex)
 		local killer = tonumber(KillerIndex)
 		local victim = tonumber(PlayerIndex)
         --say_all(tostring(DATA.damage_tag_by_dmg[lastDamagedBy[victim]]))
-		--say_all(killer..","..victim)
-	if (game_started==true) then
+		
+	--if (game_started==true) then
 		if (killer~=-1 and killer~=0 and killer~=victim) then
+            say_all("KILL: "..killer..","..victim)
             local killed_by_weapon=encodeString(tostring(DATA.damage_tag_by_dmg[lastDamagedBy[victim]]))
                 local was_backtap="0"
                 if (damageBacktap[victim]=="1") then
@@ -144,7 +145,7 @@ function OnPlayerDeath(PlayerIndex, KillerIndex)
                 table.insert(response_url,url_text)
             end
         end
-    end
+    --end
 end
 
 function OnNewGame()

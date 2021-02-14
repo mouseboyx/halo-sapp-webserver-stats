@@ -123,6 +123,46 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                         $res=mysqli_query($c, $q);
                         $row=mysqli_fetch_assoc($res);
                         $victim_id=$row['id'];
+                        
+                        
+                        /* ----New way of doing things ---*/
+                        $killed_by_weapon=mysqli_real_escape_string($c,$_GET['killed_by_weapon']);
+                        $body_part=mysqli_real_escape_string($c,$_GET['body_part']);
+                        
+                        
+                        if (isset($_GET['backtap']) && $_GET['backtap']==1) {
+                            $backtap='1';
+                        } else {
+                            $backtap='0';
+                        }
+                        
+                        $q="insert into ".$t_prefix."weapons (tag_path) select '".$killed_by_weapon."' from dual where not exists (select * from ".$t_prefix."weapons where tag_path='".$killed_by_weapon."' limit 1)";
+                        $res=mysqli_query($c,$q);
+                        $q="select id from ".$t_prefix."weapons where tag_path='".$killed_by_weapon."'";
+                        $res=mysqli_query($c,$q);
+                        $tag_path_row=mysqli_fetch_assoc($res);
+                        
+                        $q="insert into ".$t_prefix."hitstrings (hitstring) select '".$body_part."' from dual where not exists (select * from ".$t_prefix."hitstrings where hitstring='".$body_part."' limit 1)";
+                        $res=mysqli_query($c,$q);
+                        $q="select id from ".$t_prefix."hitstrings where hitstring='".$body_part."'";
+                        $res=mysqli_query($c,$q);
+                        $hitstring_row=mysqli_fetch_assoc($res);
+                        
+                        $q="select * from ".$t_prefix."killed_by_player where killer=".$killer_id." and victim=".$victim_id." and weapon_id=".$tag_path_row['id']." and hitstring_id=".$hitstring_row['id']." and backtap=".$backtap;
+                      //  echo $q;
+                        $res=mysqli_query($c,$q);
+                        $row=mysqli_fetch_assoc($res);
+                        if ($row==null) {
+                        $q="insert into ".$t_prefix."killed_by_player (killer,victim,weapon_id,hitstring_id,backtap,times) select ".$killer_id.",".$victim_id.",".$tag_path_row['id'].",".$hitstring_row['id'].",".$backtap.",1 from dual where not exists (select * from ".$t_prefix."killed_by_player where killer=".$killer_id." and victim=".$victim_id." and weapon_id=".$tag_path_row['id']." and hitstring_id=".$hitstring_row['id']." and backtap=".$backtap." and times=1 limit 1)";
+                        $res=mysqli_query($c,$q);
+                        } else {
+                            $q="update ".$t_prefix."killed_by_player set times=times+1 where killer=".$killer_id." and  victim=".$victim_id." and weapon_id=".$tag_path_row['id']." and hitstring_id=".$hitstring_row['id']." and backtap=".$backtap;
+                           // echo $q;
+                            $res=mysqli_query($c,$q);
+                        }
+                        
+                        
+                        /*  ----Old method of storing information---------
                        // echo '<br><br>';
                        // echo $victim_id.' '.$killer_id;
                         //echo '<br><br>';
@@ -178,6 +218,7 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                             $res=mysqli_query($c,$q);
                             
                         } else {
+                            //messed up this query making it so more things are counted than actually exist should have added and where hitstring='hitstring'
                             $q="update ".$t_prefix."killed_by_body_part set times=times+1 where killed_by_weapon_id=".$killed_by_weapon_id;
                             $res=mysqli_query($c,$q);
                         }
@@ -197,8 +238,12 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                                 $res=mysqli_query($c,$q);
                             }
                         }
+                        
+                        */
+                        
                         //game_server_kills
                         $q="select times from ".$t_prefix."game_server_kills where server_id=".$server_id." and game_id=".$game_id." and killer=".$killer_id;
+                        //echo $q;
                         $res=mysqli_query($c,$q);
                         $row=mysqli_fetch_assoc($res);
                         if ($row==null) {

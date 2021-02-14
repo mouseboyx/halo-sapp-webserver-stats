@@ -1,0 +1,95 @@
+<html>
+<body>
+<script>
+counter=0;
+alpha='abcdefghijklmnopqrstuvwxyz0123456789';
+killers=[];
+victims=[];
+weapons=[];
+body_parts=['head','body','legs','other'];
+for (i=0;i<40;i++) {
+    string='';
+    for (j=0;j<20;j++) {
+        string+=alpha[Math.floor(Math.random()*alpha.length)];
+    }
+    weapons[i]=string;
+}
+killer_ip=Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)
+    victim_ip=Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)
+    
+    killer_name=''
+    for (j=0;j<(3+(Math.random()*7));j++) {
+        killer_name+=alpha[Math.floor(Math.random()*alpha.length)];
+    }
+    
+    victim_name=''
+    for (j=0;j<(3+(Math.random()*7));j++) {
+        victim_name+=alpha[Math.floor(Math.random()*alpha.length)];
+    }
+  
+    u=killers.length;
+        killers[u]={};
+        killers[u].name=killer_name;
+        killers[u].ip=killer_ip;
+        
+    u=victims.length;
+        victims[u]={};
+        victims[u].name=victim_name;
+        victims[u].ip=victim_ip
+for (g=0;g<50;g++) {
+    for (z=0;z<100;z++) {
+        for (i=1;i<3;i++) {
+            killer_ip=Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)
+            victim_ip=Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)+"."+Math.round(Math.random()*255)
+            
+            killer_name=''
+            for (j=0;j<(3+(Math.random()*7));j++) {
+                killer_name+=alpha[Math.floor(Math.random()*alpha.length)];
+            }
+            
+            victim_name=''
+            for (j=0;j<(3+(Math.random()*7));j++) {
+                killer_name+=alpha[Math.floor(Math.random()*alpha.length)];
+            }
+            if (Math.random()<0.33) {
+            u=killers.length;
+                killers[u]={};
+                killers[u].name=killer_name;
+                killers[u].ip=killer_ip;
+                
+            u=victims.length;
+                victims[u]={};
+                victims[u].name=killer_name;
+                victims[u].ip=victim_ip
+            }
+            killer_index=Math.floor(Math.random()*killers.length);
+            victim_index=Math.floor(Math.random()*victims.length);
+            
+            if (Math.random()<0.01) {
+                backtap=1;
+            } else {
+                backtap=0;
+            }
+            q="http://localhost/halo/halo.php?key="+i+"&killer="+killers[killer_index].name+"&victim="+victims[victim_index].name+"&killer_ip="+killers[killer_index].ip+"&victim_ip="+victims[victim_index].ip+"&body_part="+body_parts[Math.floor(Math.random()*body_parts.length)]+"&killed_by_weapon="+weapons[Math.floor(Math.random()*weapons.length)]+"&backtap="+backtap;
+            document.body.innerHTML+=q+'<br>';
+            loadDoc(q);
+        }
+
+    }
+    //isset($_GET['newgame']) && $_GET['newgame']==1 && isset($_GET['map']) && isset($_GET['mode']) && isset($_GET['type']) && isset($_GET['key'])
+    loadDoc("http://localhost/halo/game.php?newgame=1&map=bloodgulch&mode=asdf&type=ctf&key=1")
+    loadDoc("http://localhost/halo/game.php?newgame=1&map=bloodgulch&mode=asdf&type=ctf&key=2")
+}
+function loadDoc(query) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        counter++;
+    }
+    };
+    xhttp.open("GET", query, true);
+    xhttp.send();
+}
+</script>
+</body>
+</html>
