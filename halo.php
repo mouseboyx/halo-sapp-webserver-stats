@@ -240,7 +240,14 @@ if ((isset($_GET['killer']) && isset($_GET['victim']) && isset($_GET['killer_ip'
                         }
                         
                         */
-                        
+                        /* TO DO /////////////////////
+                        /////////////////////////////
+                            increment total kills and deaths based on player_id in the table kills_deaths_kdr
+                            this table will be used for kd calculation when a new game starts, (or after a game ends theoretically)
+                            I'm finding that the division and sorting of all player k/d ratios by joining game_server_kills with game_server_deaths can take several seconds to do, so updating a stored value for it on each new game makes more sense.  It could be refined further for the homepage to have a list of the last games that have been played and if any new ones have ended since calculation of k/d then only update a list of the top 5 best k/d ratios in a different table so even the sorting doesn't have to take place, if all that is needed is the top 5, but having the full list is still useful in creation of a separate k/d page where you can page through all the players and sort them by k/d
+                        /////////////////////////////
+                        //////////////////////////////
+                        */
                         //game_server_kills
                         $q="select times from ".$t_prefix."game_server_kills where server_id=".$server_id." and game_id=".$game_id." and killer=".$killer_id;
                         //echo $q;

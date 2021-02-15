@@ -28,8 +28,15 @@
                             } else {
                                 //echo 0;
                             }
+                            /* TO DO
+                                Find the last game id before inserting a new game row
+                                Find all the player_id from the last game
+                                Update their k/d ratio in the new table kills_deaths_kdr by dividing their kills and deaths from kills_deaths_kdr
+                            */
                             $q="insert into ".$t_prefix."games (server_id,map,mode,type) values (".$row['id'].",'".$map."','".$mode."','".$type."')";
                             $res=mysqli_query($c,$q);
+                            /* the code for calculating the k/d ratios should come after a new row is inserted for a new game because it may take some time, and the new game id should be availabe as soon as possible so that stats are not placed in a previous game
+                            */
                         }
                     }
                 } else {

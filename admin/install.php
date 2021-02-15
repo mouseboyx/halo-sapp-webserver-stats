@@ -61,7 +61,9 @@
                     'create table '.$outPrefix.'killed_by_body_part (killed_by_weapon_id bigint,hitstring varchar(100),times bigint)',
                     'create table '.$outPrefix.'killed_by_backtap (killed_by_weapon_id bigint,times bigint)',
                    */
-                   
+                    
+                    'create table kills_deaths_kdr (id bigint auto_increment, player_id bigint,kills bigint, deaths bigint, kdr decimal(10,4),primary key(id))',
+                    
                     'create table '.$outPrefix.'weapons (id bigint auto_increment,tag_path varchar(100),primary key(id))',
                     'create table '.$outPrefix.'hitstrings (id bigint auto_increment,hitstring varchar(100),primary key(id))',
                     'create table '.$outPrefix.'killed_by_player (id bigint auto_increment,killer bigint,victim bigint,weapon_id bigint,hitstring_id bigint,backtap int,times bigint,primary key(id))',
